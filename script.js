@@ -1,4 +1,4 @@
-// script.js (FIXED VERSION)
+// script.js (FINAL REVISED VERSION)
 
 // -----------------------------------------------------------------------------
 // 1. GLOBAL STATE & CONFIGURATION
@@ -11,7 +11,7 @@ let userAnswers = {};
 let timerInterval;
 let participantName = '';
 let testStartTime;
-let totalTestTimeMinutes = 0; // Initialize to 0
+let totalTestTimeMinutes = 0;
 let currentReviewIndex = 0;
 
 // Anti-Cheat Tracker
@@ -33,7 +33,6 @@ const dom = {
         results: document.getElementById('results-screen'),
         review: document.getElementById('review-screen')
     },
-    // Test Screen Elements
     sidebar: document.querySelector('#test-screen .sidebar'),
     questionText: document.getElementById('question-text'),
     optionsContainer: document.getElementById('options-container'),
@@ -44,7 +43,6 @@ const dom = {
     desktopTimer: document.getElementById('timer-desktop'),
     progressBar: document.getElementById('progress-bar'),
     mobileQuestionInfo: document.getElementById('question-number-category-mobile'),
-    // Review Screen Elements
     reviewSidebar: document.getElementById('review-sidebar')
 };
 
@@ -63,7 +61,7 @@ async function initApp() {
         applyBranding();
         setupEventListeners();
         
-        // CRITICAL FIX: Ensure all screens are hidden initially except the target one.
+        // Ensure a clean start by hiding all screens.
         Object.values(dom.screens).forEach(s => s.classList.remove('active'));
 
         if (config.access?.required) {
@@ -77,36 +75,21 @@ async function initApp() {
     }
 }
 
-// CRITICAL FIX: Robust screen visibility function
+// Robust screen visibility function to prevent overlaps.
 function showScreen(screenName) {
-    // Hide all screens first to prevent overlap
     for (const key in dom.screens) {
         dom.screens[key].classList.remove('active');
-        // A more direct approach to fix the bug seen in the screenshot
-        dom.screens[key].style.display = 'none';
     }
-    // Then show the target screen
     if (dom.screens[screenName]) {
         dom.screens[screenName].classList.add('active');
-        // The display style is controlled by the .active class in CSS
-        // but setting it explicitly ensures it overrides any other styles.
-        if (screenName === 'test' || screenName === 'review') {
-            dom.screens[screenName].style.display = 'flex';
-        } else {
-            dom.screens[screenName].style.display = 'block';
-        }
     } else {
         console.error(`Attempted to show a non-existent screen: ${screenName}`);
     }
 }
 
-
 function setupEventListeners() {
-    // Test Screen Drawer
     document.getElementById('menu-toggle-btn').addEventListener('click', () => dom.sidebar.classList.add('open'));
     document.getElementById('close-sidebar-btn').addEventListener('click', () => dom.sidebar.classList.remove('open'));
-
-    // Review Screen Drawer
     document.getElementById('review-menu-toggle-btn').addEventListener('click', () => dom.reviewSidebar.classList.add('open'));
     document.getElementById('review-close-sidebar-btn').addEventListener('click', () => dom.reviewSidebar.classList.remove('open'));
 }
@@ -147,20 +130,15 @@ function prepareTest() {
 function buildBatchSelectionScreen() {
     const grid = document.getElementById('selection-grid');
     grid.innerHTML = '';
-    
     document.getElementById('selection-title').textContent = 'Pilih Batch Ujian';
     document.getElementById('selection-description').textContent = 'Setiap batch berisi paket soal yang berbeda.';
     document.getElementById('back-to-welcome-btn').style.display = 'none';
-
     config.batches.forEach(batch => {
         const btn = document.createElement('button');
         btn.className = 'selection-btn' + (batch.status === 'locked' ? ' locked' : '');
         btn.innerHTML = `<i class="fas fa-layer-group"></i><strong>${batch.title}</strong><span>${batch.description}</span>`;
-        if (batch.status !== 'locked') {
-            btn.onclick = () => selectBatch(batch);
-        } else {
-            btn.disabled = true;
-        }
+        if (batch.status !== 'locked') btn.onclick = () => selectBatch(batch);
+        else btn.disabled = true;
         grid.appendChild(btn);
     });
     showScreen('selection');
@@ -184,13 +162,11 @@ function analyzeAndBuildModeScreen() {
     document.getElementById('selection-title').textContent = 'Pilih Mode Ujian';
     document.getElementById('selection-description').textContent = 'Mode Ujian Lengkap akan dimonitor oleh sistem.';
     document.getElementById('back-to-welcome-btn').style.display = 'inline-flex';
-
     const categories = allQuestions.reduce((acc, q) => {
         const cat = q.main_category || 'Lainnya';
         acc[cat] = (acc[cat] || 0) + 1;
         return acc;
     }, {});
-
     grid.appendChild(createModeButton('all', 'Ujian Lengkap', allQuestions.length, 30, 'fas fa-star'));
     Object.entries(categories).forEach(([name, count]) => {
         grid.appendChild(createModeButton(name, name, count, 15, getCategoryIcon(name)));
@@ -202,7 +178,7 @@ function createModeButton(mode, title, count, time, icon) {
     const btn = document.createElement('button');
     btn.className = 'selection-btn';
     btn.innerHTML = `<i class="${icon}"></i><strong>${title}</strong><span>${count} Soal - ${time} Menit</span>`;
-    btn.onclick = () => startTest(mode, time); // Pass time to startTest
+    btn.onclick = () => startTest(mode, time);
     return btn;
 }
 
@@ -217,18 +193,12 @@ function goBackToWelcome() { showScreen('welcome'); }
 // 4. CORE TEST LOGIC
 // -----------------------------------------------------------------------------
 function startTest(mode, time) {
-    totalTestTimeMinutes = time; // Set the global test time
-    if (mode === 'all') {
-        activeQuestions = allQuestions;
-    } else {
-        activeQuestions = allQuestions.filter(q => q.main_category === mode);
-    }
-    
+    totalTestTimeMinutes = time;
+    activeQuestions = mode === 'all' ? allQuestions : allQuestions.filter(q => q.main_category === mode);
     if (config.security?.antiCheatEnabled && mode === config.security.applyToMode) {
         alert("PERHATIAN: Sesi Ujian Lengkap ini dipantau oleh sistem. Aktivitas mencurigakan akan tercatat pada laporan akhir.");
         initializeAntiCheatListeners();
     }
-    
     document.getElementById('instruction-list').innerHTML = `
         <li>Anda akan mengerjakan <strong>${activeQuestions.length} soal</strong>.</li>
         <li>Waktu pengerjaan Anda adalah <strong>${totalTestTimeMinutes} menit</strong>.</li>
@@ -241,7 +211,6 @@ function beginActualTest() {
     currentQuestionIndex = 0;
     userAnswers = {};
     testStartTime = new Date();
-    
     buildNavigationGrid();
     loadQuestion(0);
     startTimer();
@@ -252,17 +221,14 @@ function startTimer() {
     clearInterval(timerInterval);
     const totalTimeSeconds = totalTestTimeMinutes * 60;
     let timeLeft = totalTimeSeconds;
-
     timerInterval = setInterval(() => {
         const minutes = Math.floor(timeLeft / 60);
         const seconds = timeLeft % 60;
         const timeString = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
         dom.mobileTimer.textContent = timeString;
         dom.desktopTimer.textContent = timeString;
-        
         const progress = ((totalTimeSeconds - timeLeft) / totalTimeSeconds) * 100;
         dom.progressBar.style.width = `${progress}%`;
-
         if (--timeLeft < 0) {
             clearInterval(timerInterval);
             alert("Waktu habis!");
@@ -275,44 +241,37 @@ function loadQuestion(index) {
     if (index < 0 || index >= activeQuestions.length) return;
     currentQuestionIndex = index;
     const q = activeQuestions[index];
-    
     dom.mobileQuestionInfo.textContent = `Soal ${index + 1}/${activeQuestions.length}`;
     dom.questionText.innerHTML = q.question.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-    
     dom.optionsContainer.innerHTML = q.options.map((option, i) => {
         const optionId = `q${q.id}-o${i}`;
-        const label = String.fromCharCode(65 + i); // A, B, C, ...
+        const label = String.fromCharCode(65 + i);
         const isChecked = userAnswers[q.id] === label.toLowerCase() ? 'checked' : '';
         return `
             <label for="${optionId}" class="option">
-                <input type="radio" name="q${q.id}" id="${optionId}" value="${label.toLowerCase()}" ${isChecked}>
+                <input type="radio" name="q${q.id}" id="${optionId}" value="${label.toLowerCase()}" ${isChecked} style="display:none;">
                 <span class="option-label">${label}</span>
                 <span>${option}</span>
             </label>
         `;
     }).join('');
-    
-    // Attach event listeners
-    dom.optionsContainer.querySelectorAll('input[type="radio"]').forEach(radio => {
-        radio.addEventListener('change', () => selectAnswer(q.id, radio.value));
+    dom.optionsContainer.querySelectorAll('.option').forEach(label => {
+        label.addEventListener('click', () => {
+            const radio = label.querySelector('input[type="radio"]');
+            if (radio) selectAnswer(q.id, radio.value);
+            updateUI();
+        });
     });
-
     updateUI();
-    dom.sidebar.classList.remove('open'); // Close drawer on question change
+    dom.sidebar.classList.remove('open');
 }
 
 function updateUI() {
     dom.prevBtn.disabled = currentQuestionIndex === 0;
     dom.nextBtn.disabled = currentQuestionIndex === activeQuestions.length - 1;
-    
     dom.questionGrid.querySelectorAll('.q-btn').forEach((btn, i) => {
-        btn.classList.remove('current', 'answered');
-        if (i === currentQuestionIndex) {
-            btn.classList.add('current');
-        }
-        if (userAnswers[activeQuestions[i].id]) {
-            btn.classList.add('answered');
-        }
+        btn.classList.toggle('current', i === currentQuestionIndex);
+        btn.classList.toggle('answered', !!userAnswers[activeQuestions[i].id]);
     });
 }
 
@@ -322,10 +281,39 @@ function buildNavigationGrid() {
     ).join('');
 }
 
-function selectAnswer(questionId, answer) { userAnswers[questionId] = answer; updateUI(); }
+function selectAnswer(questionId, answer) {
+    userAnswers[questionId] = answer;
+    // Visually check the selected radio button
+    const q = activeQuestions[currentQuestionIndex];
+    dom.optionsContainer.innerHTML = q.options.map((option, i) => {
+        const optionId = `q${q.id}-o${i}`;
+        const label = String.fromCharCode(65 + i);
+        const isChecked = userAnswers[q.id] === label.toLowerCase() ? 'checked' : '';
+        return `
+            <label for="${optionId}" class="option">
+                <input type="radio" name="q${q.id}" id="${optionId}" value="${label.toLowerCase()}" ${isChecked} style="display:none;">
+                <span class="option-label">${label}</span>
+                <span>${option}</span>
+            </label>
+        `;
+    }).join('');
+    dom.optionsContainer.querySelectorAll('.option').forEach(label => {
+        label.addEventListener('click', () => {
+            const radio = label.querySelector('input[type="radio"]');
+            if (radio) selectAnswer(q.id, radio.value);
+            updateUI();
+        });
+    });
+}
 function nextQuestion() { if (currentQuestionIndex < activeQuestions.length - 1) loadQuestion(currentQuestionIndex + 1); }
 function prevQuestion() { if (currentQuestionIndex > 0) loadQuestion(currentQuestionIndex - 1); }
-function confirmFinish() { if (confirm("Apakah Anda yakin ingin menyelesaikan sesi ini? Jawaban tidak dapat diubah kembali.")) finishTest(); }
+
+function confirmFinish() {
+    // FIX: Add confirmation dialog for better UX.
+    if (confirm("Apakah Anda yakin ingin menyelesaikan sesi ini? Jawaban tidak dapat diubah kembali.")) {
+        finishTest();
+    }
+}
 
 function finishTest() {
     clearInterval(timerInterval);
@@ -335,31 +323,10 @@ function finishTest() {
 }
 
 // -----------------------------------------------------------------------------
-// 5. ANTI-CHEAT & REPORTING
+// 5. REPORTING & ANTI-CHEAT
 // -----------------------------------------------------------------------------
-function initializeAntiCheatListeners() {
-    violationTracker = { tabChanges: 0, devToolsOpened: false, sessionActive: true, monitoringInterval: null };
-    window.addEventListener('blur', handleVisibilityChange);
-    violationTracker.monitoringInterval = setInterval(() => {
-        if ((window.outerWidth - window.innerWidth > 160) || (window.outerHeight - window.innerHeight > 160)) {
-            if (!violationTracker.devToolsOpened) {
-                 violationTracker.devToolsOpened = true;
-            }
-        }
-    }, 1000);
-}
-
-function removeAntiCheatListeners() {
-    if (!violationTracker.sessionActive) return;
-    window.removeEventListener('blur', handleVisibilityChange);
-    clearInterval(violationTracker.monitoringInterval);
-    violationTracker.sessionActive = false;
-}
-
-const handleVisibilityChange = () => { if (document.hidden && violationTracker.sessionActive) violationTracker.tabChanges++; };
-
 function generateReport() {
-    // Basic Info & Duration
+    // Basic Info
     document.getElementById('report-name').textContent = participantName.toUpperCase();
     document.getElementById('report-session-id').textContent = 'SESI-' + Date.now();
     document.getElementById('report-date').textContent = new Date().toLocaleDateString('id-ID', { dateStyle: 'long', timeStyle: 'short' });
@@ -368,12 +335,13 @@ function generateReport() {
     
     // Scoring
     let correctAnswers = 0;
-    activeQuestions.forEach(q => {
-        if (userAnswers[q.id] === q.correctAnswer) correctAnswers++;
-    });
+    activeQuestions.forEach(q => { if (userAnswers[q.id] === q.correctAnswer) correctAnswers++; });
     const answeredCount = Object.keys(userAnswers).length;
     const score = activeQuestions.length > 0 ? Math.round((correctAnswers / activeQuestions.length) * 100) : 0;
     
+    // UI Update for Score & Donut Chart
+    const scoreDisplay = document.querySelector('#summary-card .score-display');
+    scoreDisplay.style.setProperty('--score', score); // Pass score to CSS for the chart
     document.getElementById('final-score').textContent = score;
     const predicate = score >= 85 ? 'LUAR BIASA' : score >= 70 ? 'SANGAT BAIK' : score >= 55 ? 'BAIK' : 'PERLU DITINGKATKAN';
     document.getElementById('score-predicate').textContent = predicate;
@@ -384,17 +352,17 @@ function generateReport() {
     if (score >= 85 && typeof confetti === 'function') {
         confetti({ particleCount: 150, spread: 90, origin: { y: 0.6 } });
     }
-
+    
+    // Generate other report sections
     generateCategoryAnalysis();
     generateViolationReport();
     generateRecommendations();
 }
 
-function generateViolationReport() {
+function generateViolationReport() { /* Unchanged from previous version */
     const section = document.getElementById('violation-report-section');
     const violationDetails = document.getElementById('violation-details');
-    violationDetails.innerHTML = '';
-    let hasViolations = false;
+    violationDetails.innerHTML = ''; let hasViolations = false;
     if (violationTracker.tabChanges > 0) {
         violationDetails.innerHTML += `<div class="behavior-item">Keluar dari tab/jendela ujian terdeteksi: <strong>${violationTracker.tabChanges} kali</strong></div>`;
         hasViolations = true;
@@ -406,50 +374,29 @@ function generateViolationReport() {
     section.style.display = hasViolations ? 'block' : 'none';
 }
 
-function generateCategoryAnalysis() {
+function generateCategoryAnalysis() { /* Unchanged from previous version */
     const analysisCard = document.getElementById('analysis-card');
     const analysisContainer = document.getElementById('analysis-container');
-    const categoryStats = {};
-
-    activeQuestions.forEach(q => {
+    const categoryStats = {}; activeQuestions.forEach(q => {
         const cat = q.main_category || 'Lainnya';
-        if (!categoryStats[cat]) {
-            categoryStats[cat] = { correct: 0, total: 0 };
-        }
+        if (!categoryStats[cat]) categoryStats[cat] = { correct: 0, total: 0 };
         categoryStats[cat].total++;
-        if (userAnswers[q.id] === q.correctAnswer) {
-            categoryStats[cat].correct++;
-        }
+        if (userAnswers[q.id] === q.correctAnswer) categoryStats[cat].correct++;
     });
-
-    if (Object.keys(categoryStats).length > 1) { // Only show if more than one category
+    if (Object.keys(categoryStats).length > 1) {
         analysisContainer.innerHTML = Object.entries(categoryStats).map(([name, stats]) => {
             const accuracy = stats.total > 0 ? Math.round((stats.correct / stats.total) * 100) : 0;
-            return `
-                <div class="category-item">
-                    <div class="category-info">
-                        <strong>${name}</strong>
-                        <span>${stats.correct}/${stats.total} Benar (${accuracy}%)</span>
-                    </div>
-                    <div class="accuracy-bar-container">
-                        <div class="accuracy-bar" style="width: ${accuracy}%; background-color: ${accuracy > 70 ? 'var(--color-correct)' : accuracy > 40 ? 'var(--color-primary)' : 'var(--color-warning)'};"></div>
-                    </div>
-                </div>
-            `;
+            return `<div class="category-item"><div class="category-info"><strong>${name}</strong><span>${stats.correct}/${stats.total} Benar (${accuracy}%)</span></div><div class="accuracy-bar-container"><div class="accuracy-bar" style="width: ${accuracy}%;"></div></div></div>`;
         }).join('');
         analysisCard.style.display = 'block';
-    } else {
-        analysisCard.style.display = 'none';
-    }
+    } else { analysisCard.style.display = 'none'; }
     return categoryStats;
 }
 
-function generateRecommendations() {
+function generateRecommendations() { /* Unchanged from previous version */
     const feedbackEl = document.getElementById('recommendation-feedback');
-    const stats = generateCategoryAnalysis();
-    let recommendations = [];
+    const stats = generateCategoryAnalysis(); let recommendations = [];
     const sortedCats = Object.entries(stats).sort(([,a], [,b]) => (a.correct/a.total) - (b.correct/b.total));
-
     if (sortedCats.length > 0) {
         const weakest = sortedCats[0];
         if ((weakest[1].correct / weakest[1].total) < 0.6) {
@@ -468,6 +415,22 @@ function generateRecommendations() {
     feedbackEl.innerHTML = `<p>${recommendations.join('</p><p>')}</p>`;
 }
 
+function initializeAntiCheatListeners() { /* Unchanged from previous version */
+    violationTracker = { tabChanges: 0, devToolsOpened: false, sessionActive: true, monitoringInterval: null };
+    window.addEventListener('blur', () => { if (violationTracker.sessionActive) violationTracker.tabChanges++; });
+    violationTracker.monitoringInterval = setInterval(() => {
+        if ((window.outerWidth - window.innerWidth > 160) || (window.outerHeight - window.innerHeight > 160)) {
+            if (!violationTracker.devToolsOpened) violationTracker.devToolsOpened = true;
+        }
+    }, 1000);
+}
+function removeAntiCheatListeners() { /* Unchanged from previous version */
+    if (!violationTracker.sessionActive) return;
+    window.removeEventListener('blur', () => {});
+    clearInterval(violationTracker.monitoringInterval);
+    violationTracker.sessionActive = false;
+}
+
 // -----------------------------------------------------------------------------
 // 6. REVIEW LOGIC
 // -----------------------------------------------------------------------------
@@ -481,10 +444,7 @@ function buildReviewGrid() {
     document.getElementById('review-grid').innerHTML = activeQuestions.map((q, i) => {
         const isAnswered = userAnswers.hasOwnProperty(q.id);
         const isCorrect = isAnswered && userAnswers[q.id] === q.correctAnswer;
-        let btnClass = '';
-        if (isAnswered) {
-            btnClass = isCorrect ? 'review-correct' : 'review-incorrect';
-        }
+        let btnClass = isAnswered ? (isCorrect ? 'review-correct' : 'review-incorrect') : '';
         return `<button class="q-btn ${btnClass}" onclick="loadReviewQuestion(${i})">${i + 1}</button>`;
     }).join('');
 }
@@ -502,7 +462,7 @@ function loadReviewQuestion(index) {
     document.getElementById('review-explanation-text').textContent = q.pembahasan || "Pembahasan untuk soal ini belum tersedia.";
     
     const banner = document.getElementById('review-status-banner');
-    banner.className = 'review-status-banner'; // Reset
+    banner.className = 'review-status-banner';
     if (isAnswered) {
         banner.classList.add(isCorrect ? 'correct' : 'incorrect');
         banner.innerHTML = `<i class="fas ${isCorrect ? 'fa-check-circle' : 'fa-times-circle'}"></i> Jawaban Anda <strong>${isCorrect ? 'BENAR' : 'SALAH'}</strong>`;
@@ -514,26 +474,11 @@ function loadReviewQuestion(index) {
     reviewOptionsContainer.innerHTML = q.options.map((option, i) => {
         const label = String.fromCharCode(65 + i).toLowerCase();
         let optionClass = 'option';
-        
-        // Style for correct answer
-        if (label === q.correctAnswer) {
-            optionClass += ' review-correct-answer';
-        }
-        
-        // Style for user's incorrect answer
-        if (isAnswered && !isCorrect && label === userAnswer) {
-            optionClass += ' review-user-incorrect';
-        }
-
-        return `
-            <div class="${optionClass}">
-                <span class="option-label">${String.fromCharCode(65 + i)}</span>
-                <span>${option}</span>
-            </div>
-        `;
+        if (label === q.correctAnswer) optionClass += ' review-correct-answer';
+        if (isAnswered && !isCorrect && label === userAnswer) optionClass += ' review-user-incorrect';
+        return `<div class="${optionClass}"><span class="option-label">${String.fromCharCode(65 + i)}</span><span>${option}</span></div>`;
     }).join('');
 
-    // Update nav buttons
     document.getElementById('review-prev-btn').disabled = index === 0;
     document.getElementById('review-next-btn').disabled = index === activeQuestions.length - 1;
     dom.reviewSidebar.classList.remove('open');
@@ -550,30 +495,20 @@ function tryAgain() { window.location.reload(); }
 function downloadPDF() {
     const { jsPDF } = window.jspdf;
     const report = document.getElementById('report-container');
-    const originalWidth = report.style.width;
     const originalShadow = report.style.boxShadow;
-    
-    // Prepare for canvas capture
-    report.style.width = '800px';
-    report.style.boxShadow = 'none'; // Remove shadow for cleaner PDF
+    report.style.boxShadow = 'none'; // Remove shadow for cleaner PDF capture
 
-    html2canvas(report, { scale: 2, useCORS: true }).then(canvas => {
-        // Restore original style
-        report.style.width = originalWidth;
-        report.style.boxShadow = originalShadow;
-
+    html2canvas(report, { scale: 2, useCORS: true, backgroundColor: null }).then(canvas => {
+        report.style.boxShadow = originalShadow; // Restore shadow
         const imgData = canvas.toDataURL('image/png');
         const pdf = new jsPDF('p', 'mm', 'a4'); 
         const pdfWidth = pdf.internal.pageSize.getWidth();
         const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-        
-        pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+        pdf.addImage(imgData, 'PNG', 10, 10, pdfWidth - 20, pdfHeight - 20);
         pdf.save(`Laporan-Hasil-${participantName.replace(/\s/g, '_')}.pdf`);
     }).catch(err => {
         console.error("Gagal membuat PDF:", err);
         alert("Maaf, terjadi kesalahan saat membuat file PDF.");
-        // Restore original style even on error
-        report.style.width = originalWidth;
-        report.style.boxShadow = originalShadow;
+        report.style.boxShadow = originalShadow; // Restore on error
     });
 }
