@@ -1,7 +1,7 @@
 /topintar-ujian/
 ├── index.html
 ├── style.css
-├── script.js
+├── script.jsss
 ├── config.json
 └── /data/
     └── batch-1.json
