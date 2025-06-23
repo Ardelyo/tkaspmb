@@ -3,51 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simulasi TKA - SPMB Jenjang SMP 2025</title>
+    <title>Ujian Mandiri TOPintar</title>
     
-    <!-- External Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
     
-    <!-- Link to your local stylesheet -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
     <div class="container">
+        <!-- LOGIN SCREEN (NEW) -->
+        <div id="login-screen" class="screen">
+            <h1 id="login-title"></h1>
+            <h2 id="login-subtitle"></h2>
+            <div class="form-group">
+                <label for="access-code">Silakan Masukkan Kode Akses</label>
+                <input type="password" id="access-code" placeholder="••••••••••">
+                <p id="login-error" class="error-message"></p>
+            </div>
+            <button class="start-btn" onclick="handleLogin()"><i class="fas fa-sign-in-alt"></i> Masuk</button>
+        </div>
+
         <!-- WELCOME SCREEN -->
-        <div id="welcome-screen" class="screen active">
-            <h1>Simulasi Ujian TKA</h1>
-            <h2>SPMB Jenjang SMP/SMA 2025</h2>
+        <div id="welcome-screen" class="screen">
+            <h1 id="welcome-title"></h1>
+            <h2 id="welcome-subtitle"></h2>
             <div class="form-group">
                 <label for="participant-name">Silakan Masukkan Nama Lengkap Anda</label>
                 <input type="text" id="participant-name" placeholder="Contoh: Budi Sanjaya">
             </div>
-            <button class="start-btn" onclick="prepareTest()"><i class="fas fa-play-circle"></i> Mulai Ujian</button>
-            <p class="disclaimer">
-                Dibuat dan dikembangkan oleh <strong>Ardelyo</strong>.<br>
-                Ini adalah soal latihan untuk simulasi dan bukan merupakan soal resmi dari dinas pendidikan.
-            </p>
+            <button class="start-btn" onclick="prepareTest()"><i class="fas fa-play-circle"></i> Lanjutkan</button>
+            <p id="welcome-disclaimer" class="disclaimer"></p>
         </div>
 
-        <!-- SELECTION SCREEN -->
+        <!-- SELECTION SCREEN (FOR BATCH & MODE) -->
         <div id="selection-screen" class="screen">
-            <h2>Pilih Mode Ujian</h2>
-            <p>Silakan pilih jenis tes yang ingin Anda kerjakan.</p>
-            <div class="selection-grid">
-                <button class="selection-btn" onclick="startTest('all')"><i class="fas fa-layer-group"></i><strong>Ujian Lengkap</strong><span>115 Soal - 90 Menit</span></button>
-                <button class="selection-btn" onclick="startTest('literasi')"><i class="fas fa-book-open"></i><strong>Literasi</strong><span>55 Soal - 45 Menit</span></button>
-                <button class="selection-btn" onclick="startTest('numerasi')"><i class="fas fa-calculator"></i><strong>Numerasi</strong><span>30 Soal - 25 Menit</span></button>
-                <button class="selection-btn" onclick="startTest('sains')"><i class="fas fa-flask"></i><strong>Pengetahuan Sains</strong><span>10 Soal - 8 Menit</span></button>
-                <button class="selection-btn" onclick="startTest('sosial')"><i class="fas fa-landmark"></i><strong>Pengetahuan Sosial</strong><span>10 Soal - 8 Menit</span></button>
-                <button class="selection-btn" onclick="startTest('ketelitian')"><i class="fas fa-search"></i><strong>Ketelitian</strong><span>10 Soal - 4 Menit</span></button>
-            </div>
+            <h2 id="selection-title"></h2>
+            <p id="selection-description"></p>
+            <div id="selection-grid" class="selection-grid"></div>
+            <button id="back-to-welcome-btn" class="footer-btn" style="margin-top: 40px; display: none;" onclick="goBackToWelcome()"><i class="fas fa-arrow-left"></i> Kembali</button>
         </div>
 
         <!-- INSTRUCTION SCREEN -->
         <div id="instruction-screen" class="screen">
-            <h2 id="instruction-title">Petunjuk Pengerjaan Ujian</h2>
+            <h2 id="instruction-title"></h2>
             <div class="instruction-content">
                 <p>Harap baca petunjuk berikut dengan saksama sebelum memulai:</p>
                 <ul id="instruction-list"></ul>
@@ -84,12 +85,11 @@
         <!-- RESULTS SCREEN -->
         <div id="results-screen" class="screen">
              <div id="report-container">
-                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzBENzdBMSI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgMTBjLTIuNzYgMC01LTIuMjQtNS01czIuMjQtNSA1LTUgNSAyLjI0IDUgNS0yLjI0IDUtNSA1eiIvPjwvc3ZnPg==" class="report-watermark" alt="Watermark" width="300">
                 <div class="report-header">
                     <div class="logo"><i class="fas fa-graduation-cap"></i></div>
                     <div class="title-group">
-                        <h2>LAPORAN HASIL UJIAN KOMPETENSI AKADEMIK</h2>
-                        <p>SPMB Jenjang SMP/SMA 2025 (Simulasi Latihan)</p>
+                        <h2 id="report-main-title"></h2>
+                        <p id="report-subtitle"></p>
                     </div>
                 </div>
                 <div class="report-body">
@@ -113,6 +113,11 @@
                             </div>
                         </div>
                     </div>
+                     <!-- VIOLATION REPORT (NEW) -->
+                    <div class="report-section" id="violation-report-section" style="display: none;">
+                        <h3><i class="fas fa-exclamation-triangle"></i> RINGKASAN MONITORING UJIAN</h3>
+                        <div id="violation-details" class="behavior-analysis"></div>
+                    </div>
                     <div class="report-section">
                         <h3>ANALISIS KINERJA PER KATEGORI</h3>
                         <table id="analysis-table">
@@ -121,31 +126,20 @@
                         </table>
                     </div>
                     <div class="report-section">
-                        <h3>ANALISIS PERILAKU PENGERJAAN</h3>
-                        <div class="behavior-analysis">
-                            <div class="behavior-item"><h4><i class="fas fa-clock"></i> Manajemen Waktu</h4><p id="behavior-time"></p></div>
-                             <div class="behavior-item"><h4><i class="fas fa-question-circle"></i> Perubahan Jawaban</h4><p id="behavior-doubt"></p></div>
-                        </div>
-                    </div>
-                    <div class="report-section">
                         <h3>REKOMENDASI PERSONAL</h3>
                         <div id="recommendation-feedback"></div>
                     </div>
                 </div>
                 <div class="report-footer">
-                    <div class="validation">
-                        <p><strong>Divalidasi Oleh Sistem Simulasi TKA</strong></p>
-                        <canvas id="qr-code"></canvas>
-                    </div>
+                    <p style="font-size: 0.8em; color: var(--text-light)">Laporan ini dihasilkan secara otomatis oleh sistem Ujian Mandiri TOPintar.</p>
                     <div class="signature">
-                        <p>Pengembang Sistem,</p>
-                        <img src="https://i.ibb.co/7gfCGj7/signature.png" alt="Signature" style="height: 50px; mix-blend-mode: darken;">
-                        <p class="name">Ardelyo</p>
+                        <p>Hormat kami,</p>
+                        <p class="name" id="report-developer"></p>
                     </div>
                 </div>
             </div>
             <div class="result-actions">
-                 <button class="start-btn" onclick="tryAgain()"><i class="fas fa-redo"></i> Ulangi Tes</button>
+                 <button class="start-btn" onclick="tryAgain()"><i class="fas fa-redo"></i> Ulangi Sesi</button>
                  <button class="start-btn review-btn" onclick="showReview()"><i class="fas fa-search-plus"></i> Lihat Pembahasan</button>
                  <button class="start-btn download-btn" onclick="downloadPDF()"><i class="fas fa-download"></i> Unduh Laporan (PDF)</button>
             </div>
@@ -157,32 +151,30 @@
                 <h3>Pembahasan Ujian</h3>
                 <p style="padding: 0 10px; font-size: 0.9em; color: var(--text-light);">Navigasi soal berdasarkan hasil Anda.</p>
                 <div id="review-grid" class="question-grid"></div>
-                <div style="margin-top: 20px; padding: 0 10px;">
-                     <p style="margin: 5px 0; font-size: 0.9em;"><span style="display: inline-block; width: 12px; height: 12px; background-color: var(--correct-green); border-radius: 3px; margin-right: 8px;"></span>Benar</p>
-                     <p style="margin: 5px 0; font-size: 0.9em;"><span style="display: inline-block; width: 12px; height: 12px; background-color: var(--incorrect-red); border-radius: 3px; margin-right: 8px;"></span>Salah</p>
-                     <p style="margin: 5px 0; font-size: 0.9em;"><span style="display: inline-block; width: 12px; height: 12px; background-color: var(--border-color); border-radius: 3px; margin-right: 8px;"></span>Kosong</p>
-                </div>
             </div>
             <div class="main-content">
                 <div class="question-area">
                     <div class="question-header">
-                        <span id="review-question-number-category">Soal 1 - Kategori</span>
+                        <span id="review-question-number-category"></span>
                     </div>
                     <div id="review-status-banner"></div>
                     <p id="review-question-text"></p>
                     <div class="options-container" id="review-options-container"></div>
+                    <!-- EXPLANATION BOX (NEW) -->
+                    <div id="review-explanation-box">
+                        <h4><i class="fas fa-lightbulb"></i> Pembahasan</h4>
+                        <pre id="review-explanation-text"></pre>
+                    </div>
                 </div>
                 <div class="test-footer">
-                    <button id="review-prev-btn" class="footer-btn" onclick="reviewPrevQuestion()"><i class="fa-solid fa-chevron-left"></i> Sebelumnya</button>
+                    <button id="review-prev-btn" class="footer-btn" onclick="reviewPrevQuestion()"><i class="fa-solid fa-chevron-left"></i></button>
                     <button class="footer-btn" onclick="showScreen('results')"><i class="fa-solid fa-arrow-left"></i> Kembali ke Laporan</button>
-                    <button id="review-next-btn" class="footer-btn" onclick="reviewNextQuestion()">Selanjutnya <i class="fa-solid fa-chevron-right"></i></button>
+                    <button id="review-next-btn" class="footer-btn" onclick="reviewNextQuestion()"><i class="fa-solid fa-chevron-right"></i></button>
                 </div>
             </div>
         </div>
-
     </div>
 
-    <!-- Link to your local script file -->
     <script src="script.js"></script>
 </body>
 </html>

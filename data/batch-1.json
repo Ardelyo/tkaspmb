@@ -1,0 +1,53 @@
+[
+    {
+        "id": 1,
+        "main_category": "Literasi",
+        "category": "Analisis Teks Banding",
+        "question": "Perhatikan dua teks berikut.\n\n**Teks A (Laporan Hasil Observasi):**\nPohon Mangga (Mangifera indica) adalah tumbuhan berkayu yang termasuk dalam suku Anacardiaceae. Tingginya dapat mencapai 10-40 meter dengan diameter batang hingga 1,5 meter. Daunnya tunggal, berwarna hijau tua, dan berbentuk lanset. Buahnya termasuk kelompok buah batu (drupa) yang berdaging, dengan ukuran dan bentuk bervariasi. Berdasarkan pengamatan, buah mangga mengandung vitamin C, vitamin A, dan serat yang bermanfaat bagi kesehatan pencernaan.\n\n**Teks B (Deskripsi):**\nDi sudut kebunku, berdiri gagah sebatang pohon mangga warisan kakek. Rindang daunnya yang hijau pekat seolah menjadi payung raksasa yang meneduhkan, tempatku berlindung dari sengatan mentari siang. Ketika musim berbuah tiba, cabang-cabangnya yang kokoh dihiasi buah-buah ranum berwarna kuning keemasan, menebarkan aroma manis yang menggoda siapa pun yang lewat. Rasanya, pohon ini bukan sekadar tumbuhan, melainkan saksi bisu kenangan masa kecilku.\n\nBerdasarkan analisis tujuan penulisan, perbedaan paling mendasar antara Teks A dan Teks B adalah...",
+        "options": [
+            "Teks A menyajikan fakta umum, sedangkan Teks B menyajikan fakta khusus.",
+            "Teks A bertujuan mengklasifikasikan secara objektif, sedangkan Teks B bertujuan membangkitkan pengalaman personal dan imajinasi pembaca.",
+            "Teks A menggunakan bahasa baku, sedangkan Teks B menggunakan bahasa tidak baku.",
+            "Teks A membahas manfaat, sedangkan Teks B hanya membahas ciri fisik."
+        ],
+        "correctAnswer": "b",
+        "pembahasan": "Analisis: Teks A adalah Laporan Hasil Observasi yang tujuannya menyajikan informasi faktual, umum, dan objektif berdasarkan pengamatan ilmiah (misal: nama latin, ukuran, kandungan vitamin). Teks B adalah Teks Deskripsi yang menggunakan bahasa emotif ('gagah', 'warisan kakek'), citraan ('aroma manis'), dan majas untuk melukiskan objek dari sudut pandang subjektif penulis, bertujuan agar pembaca dapat merasakan dan membayangkan objek tersebut. Oleh karena itu, perbedaan paling mendasar terletak pada tujuan penulisan: klasifikasi objektif vs. pengalaman imajinatif."
+    },
+    {
+        "id": 2,
+        "main_category": "Literasi",
+        "category": "Evaluasi & Modifikasi Teks",
+        "question": "Mengacu pada Teks A dan Teks B dari soal sebelumnya, jika penulis Teks B ingin mengubah tulisannya menjadi sebuah Teks Laporan Hasil Observasi (seperti Teks A), hal paling krusial yang harus ia hilangkan adalah...",
+        "options": [
+            "Informasi mengenai warna dan bentuk buah mangga.",
+            "Deskripsi tentang tinggi dan diameter batang pohon.",
+            "Penggunaan citraan (aroma manis) dan ungkapan emotif (saksi bisu kenangan).",
+            "Penyebutan nama latin Mangifera indica."
+        ],
+        "correctAnswer": "c",
+        "pembahasan": "Analisis: Teks Laporan Hasil Observasi (LHO) bersifat objektif, faktual, dan tidak memihak. Ciri utamanya adalah menghindari penggunaan bahasa subjektif, opini, atau ungkapan perasaan. Ungkapan seperti 'aroma manis yang menggoda' (citraan penciuman) dan 'saksi bisu kenangan' (ungkapan emotif/perasaan) adalah ciri khas teks deskripsi subjektif atau sastra. Untuk mengubahnya menjadi LHO, unsur-unsur ini harus dihilangkan dan diganti dengan data objektif."
+    },
+    {
+        "id": 16,
+        "main_category": "Numerasi",
+        "category": "Aritmetika Sosial (HOTS)",
+        "question": "Toko A menjual kemeja seharga Rp200.000 dengan diskon 30%. Toko B menjual kemeja yang sama seharga Rp225.000 dengan diskon \"Beli 2 Gratis 1\". Budi ingin membeli 3 kemeja. Untuk mendapatkan total biaya yang paling murah, strategi yang harus dipilih Budi adalah...",
+        "options": [
+            "Membeli 3 kemeja di Toko A.",
+            "Membeli 3 kemeja di Toko B.",
+            "Membeli 2 kemeja di Toko B dan 1 kemeja di Toko A.",
+            "Membeli 2 kemeja di Toko A dan 1 kemeja di Toko B."
+        ],
+        "correctAnswer": "a",
+        "pembahasan": "Langkah 1: Hitung total biaya di Toko A untuk 3 kemeja.\nHarga per kemeja setelah diskon = Rp200.000 - (30% x Rp200.000) = Rp200.000 - Rp60.000 = Rp140.000.\nTotal biaya 3 kemeja = 3 x Rp140.000 = **Rp420.000**.\n\nLangkah 2: Hitung total biaya di Toko B untuk 3 kemeja.\nPromo \"Beli 2 Gratis 1\" berarti Budi hanya perlu membayar untuk 2 kemeja untuk mendapatkan 3.\nHarga per kemeja = Rp225.000.\nTotal biaya 3 kemeja = 2 x Rp225.000 = **Rp450.000**.\n\nLangkah 3: Bandingkan total biaya.\nBiaya di Toko A (Rp420.000) lebih murah daripada di Toko B (Rp450.000). Jadi, strategi termurah adalah membeli semua 3 kemeja di Toko A."
+    },
+    {
+        "id": 17,
+        "main_category": "Numerasi",
+        "category": "Perbandingan Berbalik Nilai",
+        "question": "Sebuah proyek perbaikan jalan dijadwalkan selesai dalam 40 hari oleh 21 pekerja. Setelah 8 hari bekerja, proyek dihentikan selama 4 hari karena cuaca buruk. Agar proyek selesai tepat waktu, berapa banyak tambahan pekerja yang diperlukan?",
+        "options": ["3 pekerja", "6 pekerja", "7 pekerja", "9 pekerja"],
+        "correctAnswer": "a",
+        "pembahasan": "Konsep: Perbandingan Berbalik Nilai.\nTotal beban kerja = hari x pekerja = 40 x 21 = 840 unit kerja.\nPekerjaan yang sudah selesai = 8 hari x 21 pekerja = 168 unit kerja.\nSisa beban kerja = 840 - 168 = 672 unit kerja.\n\nSisa waktu yang tersedia:\nTotal waktu = 40 hari.\nWaktu sudah berjalan = 8 hari.\nWaktu berhenti = 4 hari.\nSisa hari = 40 - 8 - 4 = 28 hari.\n\nJumlah pekerja yang dibutuhkan untuk menyelesaikan sisa pekerjaan dalam sisa waktu:\nPekerja = Sisa Beban Kerja / Sisa Hari = 672 / 28 = 24 pekerja.\n\nJumlah pekerja tambahan yang diperlukan:\nPekerja tambahan = Pekerja dibutuhkan - Pekerja awal = 24 - 21 = **3 pekerja**."
+    }
+]
