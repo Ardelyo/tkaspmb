@@ -1,3 +1,5 @@
+// script.js
+
 // --- GLOBAL STATE & CONFIGURATION ---
 let config = {};
 let allQuestions = [];
@@ -8,6 +10,7 @@ let flaggedQuestions = new Set();
 let timerInterval;
 let participantName = '';
 let totalTestTimeMinutes;
+let testStartTime;
 
 // --- DOM ELEMENTS ---
 const screens = {
@@ -35,42 +38,47 @@ document.addEventListener("DOMContentLoaded", initApp);
 async function initApp() {
     try {
         const response = await fetch('config.json');
+        if (!response.ok) throw new Error('Network response was not ok');
         config = await response.json();
         applyBranding();
         
-        if (config.access.required) {
+        if (config.access && config.access.required) {
             showScreen('login');
         } else {
             showScreen('welcome');
         }
     } catch (error) {
         console.error("Failed to load configuration:", error);
-        document.body.innerHTML = "<h1>Error: Gagal memuat konfigurasi aplikasi.</h1>";
+        document.body.innerHTML = "<h1>Error: Gagal memuat konfigurasi aplikasi. Pastikan file `config.json` ada dan valid.</h1>";
     }
 }
 
 function applyBranding() {
     document.title = config.branding.title;
-    // Login Screen
     document.getElementById('login-title').textContent = config.branding.title;
     document.getElementById('login-subtitle').textContent = config.branding.subtitle;
-    // Welcome Screen
     document.getElementById('welcome-title').textContent = config.branding.title;
     document.getElementById('welcome-subtitle').textContent = config.branding.subtitle;
-    document.getElementById('welcome-disclaimer').textContent = config.branding.disclaimer;
-    // Report Screen
-    document.getElementById('report-main-title').textContent = `LAPORAN HASIL ${config.branding.title.toUpperCase()}`;
+    document.getElementById('welcome-disclaimer').innerHTML = config.branding.disclaimer;
+    document.getElementById('report-main-title').textContent = `LAPORAN HASIL UJIAN MANDIRI TOPINTAR`;
     document.getElementById('report-subtitle').textContent = config.branding.subtitle;
     document.getElementById('report-developer').textContent = config.branding.developer;
 }
 
 function showScreen(screenName) {
     Object.values(screens).forEach(s => s.classList.remove('active'));
-    screens[screenName].classList.add('active');
+    if(screens[screenName]) {
+        screens[screenName].classList.add('active');
+    }
 }
 
+// --- UTILITY FUNCTIONS ---
+function parseMarkdown(text) {
+    // Simple parser for **bold** text
+    return text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+}
 
-// --- AUTHENTICATION & SELECTION FLOW ---
+// --- AUTH & SELECTION ---
 function handleLogin() {
     const codeInput = document.getElementById('access-code');
     const errorEl = document.getElementById('login-error');
@@ -82,7 +90,6 @@ function handleLogin() {
     } else {
         errorEl.textContent = 'Kode Akses tidak valid. Silakan coba lagi.';
         errorEl.style.display = 'block';
-        codeInput.focus();
     }
 }
 
@@ -103,15 +110,10 @@ function buildBatchSelectionScreen() {
     document.getElementById('selection-description').textContent = 'Setiap batch berisi paket soal yang berbeda.';
     document.getElementById('back-to-welcome-btn').style.display = 'none';
 
-
     config.batches.forEach(batch => {
         const btn = document.createElement('button');
         btn.className = 'selection-btn';
-        btn.innerHTML = `
-            <i class="fas fa-layer-group"></i>
-            <strong>${batch.title}</strong>
-            <span>${batch.description}</span>
-        `;
+        btn.innerHTML = `<i class="fas fa-layer-group"></i><strong>${batch.title}</strong><span>${batch.description}</span>`;
         if (batch.status === 'locked') {
             btn.classList.add('locked');
             btn.disabled = true;
@@ -120,18 +122,18 @@ function buildBatchSelectionScreen() {
         }
         grid.appendChild(btn);
     });
-
     showScreen('selection');
 }
 
 async function selectBatch(batch) {
     try {
         const response = await fetch(batch.filePath);
+        if (!response.ok) throw new Error(`File not found: ${batch.filePath}`);
         allQuestions = await response.json();
         analyzeAndBuildModeScreen();
     } catch (error) {
-        console.error(`Failed to load batch file ${batch.filePath}:`, error);
-        alert('Gagal memuat data soal. Silakan coba lagi.');
+        console.error(`Failed to load batch file:`, error);
+        alert('Gagal memuat data soal. Silakan periksa path file di config.json.');
     }
 }
 
@@ -140,7 +142,7 @@ function analyzeAndBuildModeScreen() {
     grid.innerHTML = '';
     
     document.getElementById('selection-title').textContent = 'Pilih Mode Ujian';
-    document.getElementById('selection-description').textContent = 'Silakan pilih jenis tes yang ingin Anda kerjakan.';
+    document.getElementById('selection-description').textContent = 'Ujian Lengkap akan dimonitor oleh sistem anti-kecurangan.';
     document.getElementById('back-to-welcome-btn').style.display = 'inline-flex';
 
     const categories = {};
@@ -151,39 +153,27 @@ function analyzeAndBuildModeScreen() {
         categories[q.main_category].count++;
     });
 
-    // Button for All Questions
-    const allBtn = document.createElement('button');
-    allBtn.className = 'selection-btn';
-    allBtn.innerHTML = `
-        <i class="fas fa-star"></i>
-        <strong>Ujian Lengkap</strong>
-        <span>${allQuestions.length} Soal - 30 Menit</span>
-    `;
-    allBtn.onclick = () => startTest('all');
+    const allBtn = createModeButton('all', 'Ujian Lengkap', allQuestions.length, 30, 'fas fa-star');
     grid.appendChild(allBtn);
 
-    // Buttons for each category
     for (const catName in categories) {
         const cat = categories[catName];
-        const btn = document.createElement('button');
-        btn.className = 'selection-btn';
-        btn.innerHTML = `
-            <i class="${cat.icon}"></i>
-            <strong>${catName}</strong>
-            <span>${cat.count} Soal - 15 Menit</span>
-        `;
-        btn.onclick = () => startTest(catName);
+        const btn = createModeButton(catName, catName, cat.count, 15, cat.icon);
         grid.appendChild(btn);
     }
 }
 
-function getCategoryIcon(categoryName) {
-    switch(categoryName.toLowerCase()) {
-        case 'literasi': return 'fas fa-book-open';
-        case 'numerasi': return 'fas fa-calculator';
-        case 'sains': return 'fas fa-flask';
-        default: return 'fas fa-question-circle';
-    }
+function createModeButton(mode, title, count, time, icon) {
+    const btn = document.createElement('button');
+    btn.className = 'selection-btn';
+    btn.innerHTML = `<i class="${icon}"></i><strong>${title}</strong><span>${count} Soal - ${time} Menit</span>`;
+    btn.onclick = () => startTest(mode);
+    return btn;
+}
+
+function getCategoryIcon(cat) {
+    const map = { literasi: 'fas fa-book-open', numerasi: 'fas fa-calculator', sains: 'fas fa-flask' };
+    return map[cat.toLowerCase()] || 'fas fa-question-circle';
 }
 
 function goBackToWelcome() {
@@ -192,25 +182,23 @@ function goBackToWelcome() {
 
 // --- TEST LOGIC ---
 function startTest(mode) {
-    let testTitle;
     if (mode === 'all') {
         activeQuestions = allQuestions;
         totalTestTimeMinutes = 30;
-        testTitle = `Ujian Lengkap`;
     } else {
         activeQuestions = allQuestions.filter(q => q.main_category === mode);
         totalTestTimeMinutes = 15;
-        testTitle = `Ujian Kategori ${mode}`;
     }
 
-    if (config.security.antiCheatEnabled && config.security.applyToMode === mode) {
+    if (config.security.antiCheatEnabled && mode === config.security.applyToMode) {
         alert("PERHATIAN: Sesi Ujian Lengkap ini dipantau oleh sistem. Aktivitas seperti meninggalkan tab atau menyalin teks akan tercatat pada laporan akhir. Tetap fokus pada jendela ujian.");
         initializeAntiCheatListeners();
     }
 
-    document.getElementById('instruction-title').textContent = `Petunjuk Pengerjaan ${testTitle}`;
+    document.getElementById('instruction-title').textContent = `Petunjuk Pengerjaan Ujian`;
     document.getElementById('instruction-list').innerHTML = `
-        <li>Anda akan mengerjakan <strong>${activeQuestions.length} soal</strong> dalam waktu <strong>${totalTestTimeMinutes} menit</strong>.</li>
+        <li>Anda akan mengerjakan <strong>${activeQuestions.length} soal</strong>.</li>
+        <li>Waktu pengerjaan Anda adalah <strong>${totalTestTimeMinutes} menit</strong>.</li>
         <li>Waktu akan berjalan otomatis saat tes dimulai.</li>
     `;
     showScreen('instruction');
@@ -224,12 +212,12 @@ function beginActualTest() {
     buildNavigationGrid();
     loadQuestion(0);
     startTimer();
+    testStartTime = new Date();
     showScreen('test');
 }
 
 function startTimer() {
     let time = totalTestTimeMinutes * 60;
-    const totalTimeSeconds = time;
     const timerEl = document.getElementById('timer');
     const progressBar = document.getElementById('progress-bar');
     
@@ -237,12 +225,9 @@ function startTimer() {
         const minutes = Math.floor(time / 60);
         const seconds = time % 60;
         timerEl.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-        
-        const timeElapsed = totalTimeSeconds - time;
-        progressBar.style.width = `${(timeElapsed / totalTimeSeconds) * 100}%`;
+        progressBar.style.width = `${((totalTestTimeMinutes * 60 - time) / (totalTestTimeMinutes * 60)) * 100}%`;
 
-        time--;
-        if (time < 0) {
+        if (--time < 0) {
             clearInterval(timerInterval);
             finishTest();
         }
@@ -253,81 +238,54 @@ function loadQuestion(index) {
     currentQuestionIndex = index;
     const q = activeQuestions[index];
     document.getElementById('question-number-category').textContent = `Soal ${index + 1} dari ${activeQuestions.length} - ${q.category}`;
-    document.getElementById('question-text').innerHTML = `<pre>${q.question}</pre>`;
+    // FIX: Use the markdown parser
+    document.getElementById('question-text').innerHTML = parseMarkdown(q.question);
+    
     const optionsContainer = document.getElementById('options-container');
     optionsContainer.innerHTML = '';
-    const optionLabels = ['a', 'b', 'c', 'd'];
+    const optionLabels = ['a', 'b', 'c', 'd', 'e'];
     q.options.forEach((option, i) => {
         const label = document.createElement('label');
         label.className = 'option';
-        label.innerHTML = `
-            <input type="radio" name="option" value="${optionLabels[i]}">
-            <span class="option-label">${optionLabels[i].toUpperCase()}</span>
-            <span>${option}</span>
-        `;
+        label.innerHTML = `<input type="radio" name="option" value="${optionLabels[i]}"><span class="option-label">${optionLabels[i].toUpperCase()}</span><span>${option}</span>`;
         label.onclick = () => selectAnswer(q.id, optionLabels[i]);
         optionsContainer.appendChild(label);
     });
     
     if (userAnswers[q.id]) {
-        optionsContainer.querySelector(`input[value="${userAnswers[q.id]}"]`).checked = true;
+        const radio = optionsContainer.querySelector(`input[value="${userAnswers[q.id]}"]`);
+        if(radio) radio.checked = true;
     }
     updateUI();
 }
 
 function updateUI() {
-    // Update navigation grid buttons
     document.querySelectorAll('#question-grid .q-btn').forEach((btn, i) => {
-        const qId = activeQuestions[i].id;
         btn.className = 'q-btn';
         if (i === currentQuestionIndex) btn.classList.add('current');
-        if (userAnswers[qId]) btn.classList.add('answered');
-        if (flaggedQuestions.has(qId)) btn.classList.add('flagged');
+        if (userAnswers[activeQuestions[i].id]) btn.classList.add('answered');
+        if (flaggedQuestions.has(activeQuestions[i].id)) btn.classList.add('flagged');
     });
 
-    // Update nav buttons
     document.getElementById('prev-btn').disabled = currentQuestionIndex === 0;
     document.getElementById('next-btn').disabled = currentQuestionIndex === activeQuestions.length - 1;
-
-    // Update flag button
-    const flagBtn = document.getElementById('flag-btn');
-    const currentId = activeQuestions[currentQuestionIndex].id;
-    if(flaggedQuestions.has(currentId)) {
-        flagBtn.classList.add('flagged');
-        flagBtn.innerHTML = '<i class="fa-solid fa-flag"></i> Hapus Tanda';
-    } else {
-        flagBtn.classList.remove('flagged');
-        flagBtn.innerHTML = '<i class="fa-solid fa-flag"></i> Tandai Soal';
-    }
 }
 
 function buildNavigationGrid() {
-    const grid = document.getElementById('question-grid');
-    grid.innerHTML = '';
-    activeQuestions.forEach((q, index) => {
-        const btn = document.createElement('button');
-        btn.className = 'q-btn';
-        btn.textContent = index + 1;
-        btn.onclick = () => loadQuestion(index);
-        grid.appendChild(btn);
-    });
+    document.getElementById('question-grid').innerHTML = activeQuestions.map((_, index) => 
+        `<button class="q-btn" onclick="loadQuestion(${index})">${index + 1}</button>`
+    ).join('');
 }
 
-function selectAnswer(questionId, answer) { userAnswers[questionId] = answer; updateUI(); }
+function selectAnswer(questionId, answer) { userAnswers[questionId] = answer; }
 function nextQuestion() { if (currentQuestionIndex < activeQuestions.length - 1) loadQuestion(currentQuestionIndex + 1); }
 function prevQuestion() { if (currentQuestionIndex > 0) loadQuestion(currentQuestionIndex - 1); }
 function toggleFlag() {
     const currentId = activeQuestions[currentQuestionIndex].id;
-    if (flaggedQuestions.has(currentId)) flaggedQuestions.delete(currentId);
-    else flaggedQuestions.add(currentId);
+    flaggedQuestions.has(currentId) ? flaggedQuestions.delete(currentId) : flaggedQuestions.add(currentId);
     updateUI();
 }
-
-function confirmFinish() {
-    if (confirm("Apakah Anda yakin ingin menyelesaikan sesi ini?")) {
-        finishTest();
-    }
-}
+function confirmFinish() { if (confirm("Apakah Anda yakin ingin menyelesaikan sesi ini?")) finishTest(); }
 
 function finishTest() {
     clearInterval(timerInterval);
@@ -336,14 +294,13 @@ function finishTest() {
     showScreen('results');
 }
 
-// --- ANTI-CHEAT MECHANISMS ---
+// --- ANTI-CHEAT ---
 function initializeAntiCheatListeners() {
     violationTracker = { tabChanges: 0, copyAttempts: 0, devToolsOpened: false, sessionActive: true, monitoringInterval: null };
     window.addEventListener('blur', handleVisibilityChange);
     document.addEventListener('copy', handleCopy);
-    
     violationTracker.monitoringInterval = setInterval(() => {
-        if ((window.outerWidth - window.innerWidth > 150) || (window.outerHeight - window.innerHeight > 150)) {
+        if ((window.outerWidth - window.innerWidth > 160) || (window.outerHeight - window.innerHeight > 160)) {
             violationTracker.devToolsOpened = true;
         }
     }, 1000);
@@ -358,23 +315,34 @@ function removeAntiCheatListeners() {
 }
 
 const handleVisibilityChange = () => { if (violationTracker.sessionActive) violationTracker.tabChanges++; };
-const handleCopy = (e) => { if (violationTracker.sessionActive) { e.preventDefault(); violationTracker.copyAttempts++; } };
-
+const handleCopy = e => { if (violationTracker.sessionActive) { e.preventDefault(); violationTracker.copyAttempts++; } };
 
 // --- REPORTING & REVIEW ---
 function generateReport() {
+    // Basic Info
+    document.getElementById('report-name').textContent = participantName.toUpperCase();
+    document.getElementById('report-session-id').textContent = 'TKA-' + Date.now();
+    document.getElementById('report-date').textContent = new Date().toLocaleDateString('id-ID', { dateStyle: 'long' });
+
+    // Duration
+    const durationMs = new Date() - testStartTime;
+    const minutes = Math.floor(durationMs / 60000);
+    const seconds = Math.floor((durationMs % 60000) / 1000);
+    document.getElementById('report-duration').textContent = `${minutes} menit ${seconds} detik`;
+    
+    // Scoring
     let correctAnswers = 0;
     activeQuestions.forEach(q => {
         if (userAnswers[q.id] === q.correctAnswer) correctAnswers++;
     });
-    
     const score = activeQuestions.length > 0 ? Math.round((correctAnswers / activeQuestions.length) * 100) : 0;
-    document.getElementById('report-name').textContent = participantName.toUpperCase();
-    document.getElementById('report-session-id').textContent = 'TKA-' + Date.now();
+    const answeredCount = Object.keys(userAnswers).length;
+
     document.getElementById('final-score').textContent = score;
+    document.getElementById('score-predicate').textContent = score >= 80 ? 'SANGAT BAIK' : score >= 60 ? 'BAIK' : 'PERLU DITINGKATKAN';
     document.getElementById('correct-count').textContent = correctAnswers;
-    document.getElementById('incorrect-count').textContent = Object.keys(userAnswers).length - correctAnswers;
-    document.getElementById('unanswered-count').textContent = activeQuestions.length - Object.keys(userAnswers).length;
+    document.getElementById('incorrect-count').textContent = answeredCount - correctAnswers;
+    document.getElementById('unanswered-count').textContent = activeQuestions.length - answeredCount;
 
     // Violation Report
     const violationSection = document.getElementById('violation-report-section');
@@ -383,24 +351,24 @@ function generateReport() {
     let hasViolations = false;
     
     if (violationTracker.tabChanges > 0) {
-        violationDetails.innerHTML += `<div class="behavior-item"><p>Keluar dari tab/jendela ujian terdeteksi: <strong>${violationTracker.tabChanges} kali</strong></p></div>`;
-        hasViolations = true;
-    }
-    if (violationTracker.copyAttempts > 0) {
-        violationDetails.innerHTML += `<div class="behavior-item"><p>Upaya menyalin teks soal terdeteksi: <strong>${violationTracker.copyAttempts} kali</strong></p></div>`;
+        violationDetails.innerHTML += `<div class="behavior-item">Keluar dari tab/jendela ujian terdeteksi: <strong>${violationTracker.tabChanges} kali</strong></div>`;
         hasViolations = true;
     }
     if (violationTracker.devToolsOpened) {
-        violationDetails.innerHTML += `<div class="behavior-item"><p>Developer Tools (Inspect Element) terdeteksi terbuka selama ujian.</p></div>`;
+        violationDetails.innerHTML += `<div class="behavior-item">Developer Tools (Inspect Element) terdeteksi terbuka selama ujian.</div>`;
         hasViolations = true;
     }
+    violationSection.style.display = hasViolations ? 'block' : 'none';
+    
+    // Category Analysis
+    // ... Implement category analysis logic if needed, this part is complex and can be added later.
+    // For now, we'll hide the table if it's empty.
+    document.getElementById('analysis-table').style.display = 'none';
 
-    if (hasViolations) {
-        violationSection.style.display = 'block';
-    } else {
-        violationSection.style.display = 'none';
-    }
+    // Recommendations (Placeholder)
+    document.getElementById('recommendation-feedback').innerHTML = `<p>Terus berlatih untuk meningkatkan kecepatan dan ketepatan Anda. Fokus pada soal-soal yang Anda jawab salah saat melakukan review.</p>`;
 }
+
 
 function showReview() {
     buildReviewGrid();
@@ -410,17 +378,12 @@ function showReview() {
 
 function buildReviewGrid() {
     const grid = document.getElementById('review-grid');
-    grid.innerHTML = '';
-    activeQuestions.forEach((q, index) => {
-        const btn = document.createElement('button');
-        btn.className = 'q-btn';
-        btn.textContent = index + 1;
-        btn.onclick = () => loadReviewQuestion(index);
-        const userAnswer = userAnswers[q.id];
-        if (userAnswer === q.correctAnswer) btn.classList.add('review-correct');
-        else if (userAnswer) btn.classList.add('review-incorrect');
-        grid.appendChild(btn);
-    });
+    grid.innerHTML = activeQuestions.map((q, index) => {
+        const isCorrect = userAnswers[q.id] === q.correctAnswer;
+        const isAnswered = userAnswers.hasOwnProperty(q.id);
+        const btnClass = isAnswered ? (isCorrect ? 'review-correct' : 'review-incorrect') : '';
+        return `<button class="q-btn ${btnClass}" onclick="loadReviewQuestion(${index})">${index + 1}</button>`;
+    }).join('');
 }
 
 function loadReviewQuestion(index) {
@@ -430,30 +393,30 @@ function loadReviewQuestion(index) {
     const isCorrect = userAnswer === q.correctAnswer;
 
     document.getElementById('review-question-number-category').textContent = `Soal ${index + 1} - ${q.category}`;
-    document.getElementById('review-question-text').innerHTML = `<pre>${q.question}</pre>`;
+    document.getElementById('review-question-text').innerHTML = parseMarkdown(q.question);
     document.getElementById('review-explanation-text').textContent = q.pembahasan || "Pembahasan untuk soal ini belum tersedia.";
     
     const banner = document.getElementById('review-status-banner');
     if (userAnswer) {
-        banner.className = isCorrect ? 'correct' : 'incorrect';
-        banner.innerHTML = isCorrect ? `<i class="fas fa-check-circle"></i> Jawaban Anda Benar` : `<i class="fas fa-times-circle"></i> Jawaban Anda Salah`;
+        banner.className = 'review-status-banner ' + (isCorrect ? 'correct' : 'incorrect');
+        banner.innerHTML = `<i class="fas fa-check-circle"></i> Jawaban Anda ${isCorrect ? 'Benar' : 'Salah'}`;
     } else {
-        banner.className = 'unanswered'; banner.innerHTML = 'Soal ini tidak dijawab';
+        banner.className = 'review-status-banner'; // Neutral
+        banner.innerHTML = `Soal ini tidak dijawab`;
     }
 
     const optionsContainer = document.getElementById('review-options-container');
     optionsContainer.innerHTML = '';
-    const optionLabels = ['a', 'b', 'c', 'd'];
+    const optionLabels = ['a', 'b', 'c', 'd', 'e'];
     q.options.forEach((optionText, i) => {
         const optionValue = optionLabels[i];
         const div = document.createElement('div');
         div.className = 'review-option';
         if (optionValue === q.correctAnswer) div.classList.add('correct-answer');
         else if (optionValue === userAnswer) div.classList.add('user-incorrect');
-        div.innerHTML = `<span class="option-label">${optionValue.toUpperCase()}</span><span>${optionText}</span>`;
+        div.innerHTML = `<span>${optionText}</span>`;
         optionsContainer.appendChild(div);
     });
-
     updateReviewUI();
 }
 
@@ -461,17 +424,14 @@ function updateReviewUI() {
     document.getElementById('review-prev-btn').disabled = currentReviewIndex === 0;
     document.getElementById('review-next-btn').disabled = currentReviewIndex === activeQuestions.length - 1;
     document.querySelectorAll('#review-grid .q-btn').forEach((btn, i) => {
-        btn.classList.remove('current-review');
-        if (i === currentReviewIndex) btn.classList.add('current-review');
+        btn.classList.toggle('current-review', i === currentReviewIndex);
     });
 }
 
 function reviewPrevQuestion() { if (currentReviewIndex > 0) loadReviewQuestion(currentReviewIndex - 1); }
 function reviewNextQuestion() { if (currentReviewIndex < activeQuestions.length - 1) loadReviewQuestion(currentReviewIndex + 1); }
 
-function tryAgain() {
-    window.location.reload();
-}
+function tryAgain() { window.location.reload(); }
 
 function downloadPDF() {
     const { jsPDF } = window.jspdf;
@@ -481,7 +441,7 @@ function downloadPDF() {
         const pdf = new jsPDF('p', 'mm', 'a4'); 
         const pdfWidth = pdf.internal.pageSize.getWidth();
         const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-        pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+        pdf.addImage(imgData, 'PNG', 10, 10, pdfWidth - 20, pdfHeight - 20);
         pdf.save(`Laporan-TOPintar-${participantName.replace(/\s/g, '_')}.pdf`);
     });
 }
