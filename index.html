@@ -5,23 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ujian Mandiri TOPintar</title>
     
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
     
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
     <div class="container">
-        <!-- LOGIN SCREEN -->
+        <!-- LOGIN SCREEN (NEW) -->
         <div id="login-screen" class="screen">
             <h1 id="login-title"></h1>
             <h2 id="login-subtitle"></h2>
             <div class="form-group">
-                <label for="access-code">Kode Akses Ujian</label>
-                <input type="password" id="access-code" placeholder="Masukkan kode unik Anda">
+                <label for="access-code">Silakan Masukkan Kode Akses</label>
+                <input type="password" id="access-code" placeholder="••••••••••">
                 <p id="login-error" class="error-message"></p>
             </div>
             <button class="start-btn" onclick="handleLogin()"><i class="fas fa-sign-in-alt"></i> Masuk</button>
@@ -32,10 +31,11 @@
             <h1 id="welcome-title"></h1>
             <h2 id="welcome-subtitle"></h2>
             <div class="form-group">
-                <label for="participant-name">Nama Lengkap Peserta</label>
+                <label for="participant-name">Silakan Masukkan Nama Lengkap Anda</label>
                 <input type="text" id="participant-name" placeholder="Contoh: Budi Sanjaya">
             </div>
             <button class="start-btn" onclick="prepareTest()"><i class="fas fa-play-circle"></i> Lanjutkan</button>
+            <p id="welcome-disclaimer" class="disclaimer"></p>
         </div>
 
         <!-- SELECTION SCREEN (FOR BATCH & MODE) -->
@@ -48,7 +48,7 @@
 
         <!-- INSTRUCTION SCREEN -->
         <div id="instruction-screen" class="screen">
-            <h2 id="instruction-title">Petunjuk Pengerjaan</h2>
+            <h2 id="instruction-title"></h2>
             <div class="instruction-content">
                 <p>Harap baca petunjuk berikut dengan saksama sebelum memulai:</p>
                 <ul id="instruction-list"></ul>
@@ -57,90 +57,85 @@
             <button class="start-btn" onclick="beginActualTest()">Saya Mengerti dan Siap Memulai</button>
         </div>
 
-        <!-- TEST SCREEN (NEW MOBILE-FIRST STRUCTURE) -->
+        <!-- TEST SCREEN -->
         <div id="test-screen" class="screen">
-            <!-- Mobile Header -->
-            <div class="test-header-mobile">
-                <button id="menu-toggle-btn"><i class="fas fa-bars"></i></button>
-                <span id="question-number-category-mobile"></span>
-                <span id="timer-mobile">00:00</span>
-            </div>
-            <!-- Sidebar / Drawer -->
             <div class="sidebar">
-                <div class="sidebar-header">
-                    <h3>Navigasi Ujian</h3>
-                    <button id="close-sidebar-btn"><i class="fas fa-times"></i></button>
-                </div>
-                <div id="timer-desktop" class="timer">00:00</div>
+                <h3>Navigasi Ujian</h3>
+                <div id="timer">00:00</div>
                 <div id="progress-bar-container"><div id="progress-bar"></div></div>
                 <div id="question-grid"></div>
             </div>
-            <!-- Main Content Area -->
             <div class="main-content">
                 <div class="question-area">
+                    <div class="question-header">
+                        <span id="question-number-category">Soal 1 - Sinonim</span>
+                        <button id="flag-btn" class="footer-btn" onclick="toggleFlag()"><i class="fa-solid fa-flag"></i> Tandai Soal</button>
+                    </div>
                     <p id="question-text"></p>
                     <div class="options-container" id="options-container"></div>
                 </div>
-                <!-- ***** FOOTER FIX: START ***** -->
                 <div class="test-footer">
                     <button id="prev-btn" class="footer-btn" onclick="prevQuestion()"><i class="fa-solid fa-chevron-left"></i> Sebelumnya</button>
-                    <button id="finish-btn" class="footer-btn" onclick="confirmFinish()"><i class="fas fa-check-circle"></i> Selesaikan Tes</button>
+                    <button id="finish-btn" class="footer-btn" onclick="confirmFinish()">Selesaikan Tes</button>
                     <button id="next-btn" class="footer-btn" onclick="nextQuestion()">Selanjutnya <i class="fa-solid fa-chevron-right"></i></button>
                 </div>
-                <!-- ***** FOOTER FIX: END ***** -->
             </div>
         </div>
 
-        <!-- RESULTS SCREEN (NEW CARD-BASED STRUCTURE) -->
+        <!-- RESULTS SCREEN -->
         <div id="results-screen" class="screen">
-            <div id="report-container">
+             <div id="report-container">
                 <div class="report-header">
                     <div class="logo"><i class="fas fa-graduation-cap"></i></div>
-                    <h2 id="report-main-title"></h2>
-                    <p id="report-subtitle"></p>
+                    <div class="title-group">
+                        <h2 id="report-main-title"></h2>
+                        <p id="report-subtitle"></p>
+                    </div>
                 </div>
-
-                <div id="info-card" class="report-card">
-                    <h3><i class="fas fa-user"></i> Info Peserta</h3>
+                <div class="report-body">
                     <div class="participant-info">
-                        <p><span class="label">NAMA:</span> <span id="report-name"></span></p>
+                        <p><span class="label">NAMA PESERTA:</span> <span id="report-name"></span></p>
                         <p><span class="label">ID SESI:</span> <span id="report-session-id"></span></p>
-                        <p><span class="label">TANGGAL:</span> <span id="report-date"></span></p>
-                        <p><span class="label">DURASI:</span> <span id="report-duration"></span></p>
+                        <p><span class="label">TANGGAL UJIAN:</span> <span id="report-date"></span></p>
+                        <p><span class="label">DURASI PENGERJAAN:</span> <span id="report-duration"></span></p>
+                    </div>
+                    <div class="report-section">
+                        <h3>RINGKASAN HASIL</h3>
+                        <div class="summary-grid">
+                            <div class="score-display">
+                                <div id="final-score">0</div>
+                                <p id="score-predicate">N/A</p>
+                            </div>
+                            <div class="details-grid">
+                                <div class="detail-item"><div class="value" id="correct-count">0</div><div class="label"><i class="fas fa-check-circle"></i> BENAR</div></div>
+                                <div class="detail-item"><div class="value" id="incorrect-count">0</div><div class="label"><i class="fas fa-times-circle"></i> SALAH</div></div>
+                                <div class="detail-item"><div class="value" id="unanswered-count">0</div><div class="label"><i class="fas fa-minus-circle"></i> KOSONG</div></div>
+                            </div>
+                        </div>
+                    </div>
+                     <!-- VIOLATION REPORT (NEW) -->
+                    <div class="report-section" id="violation-report-section" style="display: none;">
+                        <h3><i class="fas fa-exclamation-triangle"></i> RINGKASAN MONITORING UJIAN</h3>
+                        <div id="violation-details" class="behavior-analysis"></div>
+                    </div>
+                    <div class="report-section">
+                        <h3>ANALISIS KINERJA PER KATEGORI</h3>
+                        <table id="analysis-table">
+                            <thead><tr><th>Kategori</th><th>Benar/Total</th><th>Akurasi</th><th>Waktu Rata-rata</th></tr></thead>
+                            <tbody id="analysis-tbody"></tbody>
+                        </table>
+                    </div>
+                    <div class="report-section">
+                        <h3>REKOMENDASI PERSONAL</h3>
+                        <div id="recommendation-feedback"></div>
                     </div>
                 </div>
-
-                <div id="summary-card" class="report-card">
-                    <h3><i class="fas fa-chart-pie"></i> Ringkasan Hasil</h3>
-                    <div class="score-display">
-                        <div id="final-score">0</div>
-                        <p id="score-predicate">N/A</p>
-                    </div>
-                    <div class="details-grid">
-                        <div class="detail-item"><div class="value" id="correct-count">0</div><div class="label">Benar</div></div>
-                        <div class="detail-item"><div class="value" id="incorrect-count">0</div><div class="label">Salah</div></div>
-                        <div class="detail-item"><div class="value" id="unanswered-count">0</div><div class="label">Kosong</div></div>
-                    </div>
-                </div>
-
-                <div id="analysis-card" class="report-card" style="display: none;">
-                    <h3><i class="fas fa-tasks"></i> Analisis Kinerja Kategori</h3>
-                    <div id="analysis-container"></div>
-                </div>
-
-                <div id="violation-report-section" class="report-card" style="display: none;">
-                    <h3><i class="fas fa-exclamation-triangle"></i> Monitoring Ujian</h3>
-                    <div id="violation-details"></div>
-                </div>
-                
-                <div id="recommendation-card" class="report-card">
-                    <h3><i class="fas fa-lightbulb"></i> Rekomendasi</h3>
-                    <div id="recommendation-feedback"></div>
-                </div>
-
                 <div class="report-footer">
-                    <p>Laporan ini dihasilkan secara otomatis oleh sistem Ujian Mandiri TOPintar.</p>
-                    <p id="report-developer"></p>
+                    <p style="font-size: 0.8em; color: var(--text-light)">Laporan ini dihasilkan secara otomatis oleh sistem Ujian Mandiri TOPintar.</p>
+                    <div class="signature">
+                        <p>Hormat kami,</p>
+                        <p class="name" id="report-developer"></p>
+                    </div>
                 </div>
             </div>
             <div class="result-actions">
@@ -149,40 +144,35 @@
                  <button class="start-btn download-btn" onclick="downloadPDF()"><i class="fas fa-download"></i> Unduh Laporan (PDF)</button>
             </div>
         </div>
-        
-        <!-- REVIEW SCREEN (Same structure as test screen) -->
+
+        <!-- REVIEW SCREEN -->
         <div id="review-screen" class="screen">
-            <div class="test-header-mobile">
-                <button id="review-menu-toggle-btn"><i class="fas fa-bars"></i></button>
-                <span id="review-question-number-category-mobile"></span>
-            </div>
-            <div class="sidebar" id="review-sidebar">
-                <div class="sidebar-header">
-                    <h3>Pembahasan</h3>
-                    <button id="review-close-sidebar-btn"><i class="fas fa-times"></i></button>
-                </div>
-                <div id="review-grid"></div>
+            <div class="sidebar">
+                <h3>Pembahasan Ujian</h3>
+                <p style="padding: 0 10px; font-size: 0.9em; color: var(--text-light);">Navigasi soal berdasarkan hasil Anda.</p>
+                <div id="review-grid" class="question-grid"></div>
             </div>
             <div class="main-content">
                 <div class="question-area">
+                    <div class="question-header">
+                        <span id="review-question-number-category"></span>
+                    </div>
                     <div id="review-status-banner"></div>
                     <p id="review-question-text"></p>
                     <div class="options-container" id="review-options-container"></div>
+                    <!-- EXPLANATION BOX (NEW) -->
                     <div id="review-explanation-box">
                         <h4><i class="fas fa-lightbulb"></i> Pembahasan</h4>
                         <pre id="review-explanation-text"></pre>
                     </div>
                 </div>
-                <!-- ***** FOOTER FIX: START ***** -->
                 <div class="test-footer">
-                    <button id="review-prev-btn" class="footer-btn" onclick="reviewPrevQuestion()"><i class="fa-solid fa-chevron-left"></i> Sebelumnya</button>
-                    <button class="footer-btn" onclick="showScreen('results')"><i class="fa-solid fa-arrow-left"></i> Laporan</button>
-                    <button id="review-next-btn" class="footer-btn" onclick="reviewNextQuestion()">Selanjutnya <i class="fa-solid fa-chevron-right"></i></button>
+                    <button id="review-prev-btn" class="footer-btn" onclick="reviewPrevQuestion()"><i class="fa-solid fa-chevron-left"></i></button>
+                    <button class="footer-btn" onclick="showScreen('results')"><i class="fa-solid fa-arrow-left"></i> Kembali ke Laporan</button>
+                    <button id="review-next-btn" class="footer-btn" onclick="reviewNextQuestion()"><i class="fa-solid fa-chevron-right"></i></button>
                 </div>
-                <!-- ***** FOOTER FIX: END ***** -->
             </div>
         </div>
-
     </div>
 
     <script src="script.js"></script>
