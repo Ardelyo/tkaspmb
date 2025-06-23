@@ -12,6 +12,7 @@ let timerInterval;
 let participantName = '';
 let testStartTime;
 let totalTestTimeMinutes = 0; // Initialize to 0
+let currentReviewIndex = 0;
 
 // Anti-Cheat Tracker
 let violationTracker = {
@@ -81,14 +82,24 @@ function showScreen(screenName) {
     // Hide all screens first to prevent overlap
     for (const key in dom.screens) {
         dom.screens[key].classList.remove('active');
+        // A more direct approach to fix the bug seen in the screenshot
+        dom.screens[key].style.display = 'none';
     }
     // Then show the target screen
     if (dom.screens[screenName]) {
         dom.screens[screenName].classList.add('active');
+        // The display style is controlled by the .active class in CSS
+        // but setting it explicitly ensures it overrides any other styles.
+        if (screenName === 'test' || screenName === 'review') {
+            dom.screens[screenName].style.display = 'flex';
+        } else {
+            dom.screens[screenName].style.display = 'block';
+        }
     } else {
         console.error(`Attempted to show a non-existent screen: ${screenName}`);
     }
 }
+
 
 function setupEventListeners() {
     // Test Screen Drawer
@@ -114,10 +125,11 @@ function applyBranding() {
 
 function handleLogin() {
     const codeInput = document.getElementById('access-code');
+    const errorEl = document.getElementById('login-error');
     if (config.access.validCodes.includes(codeInput.value.trim())) {
+        errorEl.style.display = 'none';
         showScreen('welcome');
     } else {
-        const errorEl = document.getElementById('login-error');
         errorEl.textContent = 'Kode Akses tidak valid.';
         errorEl.style.display = 'block';
     }
@@ -125,7 +137,10 @@ function handleLogin() {
 
 function prepareTest() {
     participantName = document.getElementById('participant-name').value.trim();
-    if (participantName === "") return alert("Nama tidak boleh kosong.");
+    if (participantName === "") {
+        alert("Nama lengkap tidak boleh kosong.");
+        return;
+    }
     buildBatchSelectionScreen();
 }
 
@@ -143,6 +158,8 @@ function buildBatchSelectionScreen() {
         btn.innerHTML = `<i class="fas fa-layer-group"></i><strong>${batch.title}</strong><span>${batch.description}</span>`;
         if (batch.status !== 'locked') {
             btn.onclick = () => selectBatch(batch);
+        } else {
+            btn.disabled = true;
         }
         grid.appendChild(btn);
     });
@@ -157,7 +174,7 @@ async function selectBatch(batch) {
         analyzeAndBuildModeScreen();
     } catch (error) {
         console.error(`Failed to load batch file:`, error);
-        alert('Gagal memuat data soal.');
+        alert('Gagal memuat data soal untuk batch ini.');
     }
 }
 
@@ -169,7 +186,8 @@ function analyzeAndBuildModeScreen() {
     document.getElementById('back-to-welcome-btn').style.display = 'inline-flex';
 
     const categories = allQuestions.reduce((acc, q) => {
-        acc[q.main_category] = (acc[q.main_category] || 0) + 1;
+        const cat = q.main_category || 'Lainnya';
+        acc[cat] = (acc[cat] || 0) + 1;
         return acc;
     }, {});
 
@@ -177,6 +195,7 @@ function analyzeAndBuildModeScreen() {
     Object.entries(categories).forEach(([name, count]) => {
         grid.appendChild(createModeButton(name, name, count, 15, getCategoryIcon(name)));
     });
+    showScreen('selection');
 }
 
 function createModeButton(mode, title, count, time, icon) {
@@ -213,7 +232,8 @@ function startTest(mode, time) {
     document.getElementById('instruction-list').innerHTML = `
         <li>Anda akan mengerjakan <strong>${activeQuestions.length} soal</strong>.</li>
         <li>Waktu pengerjaan Anda adalah <strong>${totalTestTimeMinutes} menit</strong>.</li>
-        <li>Waktu akan berjalan otomatis saat tes dimulai.</li>`;
+        <li>Waktu akan berjalan otomatis saat tes dimulai.</li>
+        <li>Pastikan Anda menekan tombol "Selesaikan Tes" jika sudah selesai sebelum waktu habis.</li>`;
     showScreen('instruction');
 }
 
@@ -245,12 +265,14 @@ function startTimer() {
 
         if (--timeLeft < 0) {
             clearInterval(timerInterval);
+            alert("Waktu habis!");
             finishTest();
         }
     }, 1000);
 }
 
 function loadQuestion(index) {
+    if (index < 0 || index >= activeQuestions.length) return;
     currentQuestionIndex = index;
     const q = activeQuestions[index];
     
@@ -259,22 +281,20 @@ function loadQuestion(index) {
     
     dom.optionsContainer.innerHTML = q.options.map((option, i) => {
         const optionId = `q${q.id}-o${i}`;
-        const label = String.fromCharCode(65 + i); // A, B, C, D
+        const label = String.fromCharCode(65 + i); // A, B, C, ...
+        const isChecked = userAnswers[q.id] === label.toLowerCase() ? 'checked' : '';
         return `
             <label for="${optionId}" class="option">
-                <input type="radio" name="q${q.id}" id="${optionId}" value="${label.toLowerCase()}">
+                <input type="radio" name="q${q.id}" id="${optionId}" value="${label.toLowerCase()}" ${isChecked}>
                 <span class="option-label">${label}</span>
                 <span>${option}</span>
             </label>
         `;
     }).join('');
     
-    // Attach event listeners and check saved answer
+    // Attach event listeners
     dom.optionsContainer.querySelectorAll('input[type="radio"]').forEach(radio => {
         radio.addEventListener('change', () => selectAnswer(q.id, radio.value));
-        if (userAnswers[q.id] === radio.value) {
-            radio.checked = true;
-        }
     });
 
     updateUI();
@@ -286,8 +306,13 @@ function updateUI() {
     dom.nextBtn.disabled = currentQuestionIndex === activeQuestions.length - 1;
     
     dom.questionGrid.querySelectorAll('.q-btn').forEach((btn, i) => {
-        btn.classList.toggle('current', i === currentQuestionIndex);
-        btn.classList.toggle('answered', !!userAnswers[activeQuestions[i].id]);
+        btn.classList.remove('current', 'answered');
+        if (i === currentQuestionIndex) {
+            btn.classList.add('current');
+        }
+        if (userAnswers[activeQuestions[i].id]) {
+            btn.classList.add('answered');
+        }
     });
 }
 
@@ -300,7 +325,7 @@ function buildNavigationGrid() {
 function selectAnswer(questionId, answer) { userAnswers[questionId] = answer; updateUI(); }
 function nextQuestion() { if (currentQuestionIndex < activeQuestions.length - 1) loadQuestion(currentQuestionIndex + 1); }
 function prevQuestion() { if (currentQuestionIndex > 0) loadQuestion(currentQuestionIndex - 1); }
-function confirmFinish() { if (confirm("Apakah Anda yakin ingin menyelesaikan sesi ini?")) finishTest(); }
+function confirmFinish() { if (confirm("Apakah Anda yakin ingin menyelesaikan sesi ini? Jawaban tidak dapat diubah kembali.")) finishTest(); }
 
 function finishTest() {
     clearInterval(timerInterval);
@@ -317,7 +342,9 @@ function initializeAntiCheatListeners() {
     window.addEventListener('blur', handleVisibilityChange);
     violationTracker.monitoringInterval = setInterval(() => {
         if ((window.outerWidth - window.innerWidth > 160) || (window.outerHeight - window.innerHeight > 160)) {
-            violationTracker.devToolsOpened = true;
+            if (!violationTracker.devToolsOpened) {
+                 violationTracker.devToolsOpened = true;
+            }
         }
     }, 1000);
 }
@@ -329,32 +356,32 @@ function removeAntiCheatListeners() {
     violationTracker.sessionActive = false;
 }
 
-const handleVisibilityChange = () => { if (violationTracker.sessionActive) violationTracker.tabChanges++; };
+const handleVisibilityChange = () => { if (document.hidden && violationTracker.sessionActive) violationTracker.tabChanges++; };
 
 function generateReport() {
     // Basic Info & Duration
     document.getElementById('report-name').textContent = participantName.toUpperCase();
-    document.getElementById('report-session-id').textContent = 'TKA-' + Date.now();
-    document.getElementById('report-date').textContent = new Date().toLocaleDateString('id-ID', { dateStyle: 'long' });
+    document.getElementById('report-session-id').textContent = 'SESI-' + Date.now();
+    document.getElementById('report-date').textContent = new Date().toLocaleDateString('id-ID', { dateStyle: 'long', timeStyle: 'short' });
     const durationMs = new Date() - testStartTime;
     document.getElementById('report-duration').textContent = `${Math.floor(durationMs / 60000)} menit ${Math.floor((durationMs % 60000) / 1000)} detik`;
     
     // Scoring
     let correctAnswers = 0;
-    const answeredCount = Object.keys(userAnswers).length;
     activeQuestions.forEach(q => {
         if (userAnswers[q.id] === q.correctAnswer) correctAnswers++;
     });
+    const answeredCount = Object.keys(userAnswers).length;
     const score = activeQuestions.length > 0 ? Math.round((correctAnswers / activeQuestions.length) * 100) : 0;
     
     document.getElementById('final-score').textContent = score;
-    const predicate = score >= 85 ? 'LUAR BIASA' : score >= 70 ? 'BAIK' : 'PERLU DITINGKATKAN';
+    const predicate = score >= 85 ? 'LUAR BIASA' : score >= 70 ? 'SANGAT BAIK' : score >= 55 ? 'BAIK' : 'PERLU DITINGKATKAN';
     document.getElementById('score-predicate').textContent = predicate;
     document.getElementById('correct-count').textContent = correctAnswers;
     document.getElementById('incorrect-count').textContent = answeredCount - correctAnswers;
     document.getElementById('unanswered-count').textContent = activeQuestions.length - answeredCount;
 
-    if (score >= 85) {
+    if (score >= 85 && typeof confetti === 'function') {
         confetti({ particleCount: 150, spread: 90, origin: { y: 0.6 } });
     }
 
@@ -364,6 +391,7 @@ function generateReport() {
 }
 
 function generateViolationReport() {
+    const section = document.getElementById('violation-report-section');
     const violationDetails = document.getElementById('violation-details');
     violationDetails.innerHTML = '';
     let hasViolations = false;
@@ -375,24 +403,26 @@ function generateViolationReport() {
         violationDetails.innerHTML += `<div class="behavior-item">Developer Tools (Inspect Element) terdeteksi terbuka.</div>`;
         hasViolations = true;
     }
-    document.getElementById('violation-report-section').style.display = hasViolations ? 'block' : 'none';
+    section.style.display = hasViolations ? 'block' : 'none';
 }
 
 function generateCategoryAnalysis() {
+    const analysisCard = document.getElementById('analysis-card');
     const analysisContainer = document.getElementById('analysis-container');
     const categoryStats = {};
 
     activeQuestions.forEach(q => {
-        if (!categoryStats[q.main_category]) {
-            categoryStats[q.main_category] = { correct: 0, total: 0 };
+        const cat = q.main_category || 'Lainnya';
+        if (!categoryStats[cat]) {
+            categoryStats[cat] = { correct: 0, total: 0 };
         }
-        categoryStats[q.main_category].total++;
+        categoryStats[cat].total++;
         if (userAnswers[q.id] === q.correctAnswer) {
-            categoryStats[q.main_category].correct++;
+            categoryStats[cat].correct++;
         }
     });
 
-    if (Object.keys(categoryStats).length > 0) {
+    if (Object.keys(categoryStats).length > 1) { // Only show if more than one category
         analysisContainer.innerHTML = Object.entries(categoryStats).map(([name, stats]) => {
             const accuracy = stats.total > 0 ? Math.round((stats.correct / stats.total) * 100) : 0;
             return `
@@ -402,14 +432,14 @@ function generateCategoryAnalysis() {
                         <span>${stats.correct}/${stats.total} Benar (${accuracy}%)</span>
                     </div>
                     <div class="accuracy-bar-container">
-                        <div class="accuracy-bar" style="width: ${accuracy}%; background-color: ${accuracy > 70 ? 'var(--color-correct)' : 'var(--color-primary)'};"></div>
+                        <div class="accuracy-bar" style="width: ${accuracy}%; background-color: ${accuracy > 70 ? 'var(--color-correct)' : accuracy > 40 ? 'var(--color-primary)' : 'var(--color-warning)'};"></div>
                     </div>
                 </div>
             `;
         }).join('');
-        document.getElementById('analysis-card').style.display = 'block';
+        analysisCard.style.display = 'block';
     } else {
-        document.getElementById('analysis-card').style.display = 'none';
+        analysisCard.style.display = 'none';
     }
     return categoryStats;
 }
@@ -422,16 +452,18 @@ function generateRecommendations() {
 
     if (sortedCats.length > 0) {
         const weakest = sortedCats[0];
-        const strongest = sortedCats[sortedCats.length - 1];
         if ((weakest[1].correct / weakest[1].total) < 0.6) {
             recommendations.push(`Kinerja Anda di kategori <strong>${weakest[0]}</strong> perlu perhatian lebih. Fokus pelajari kembali soal-soal di area ini.`);
         }
-        if ((strongest[1].correct / strongest[1].total) >= 0.8 && strongest[0] !== weakest[0]) {
-            recommendations.push(`Anda menunjukkan penguasaan yang sangat baik pada kategori <strong>${strongest[0]}</strong>. Pertahankan!`);
+        if (sortedCats.length > 1) {
+            const strongest = sortedCats[sortedCats.length - 1];
+            if ((strongest[1].correct / strongest[1].total) >= 0.8 && strongest[0] !== weakest[0]) {
+                recommendations.push(`Anda menunjukkan penguasaan yang sangat baik pada kategori <strong>${strongest[0]}</strong>. Pertahankan!`);
+            }
         }
     }
     if (recommendations.length === 0) {
-        recommendations.push("Performa Anda secara umum sudah seimbang. Terus berlatih untuk meningkatkan kecepatan dan konsistensi.");
+        recommendations.push("Performa Anda secara umum sudah cukup baik dan seimbang. Terus berlatih untuk meningkatkan kecepatan dan konsistensi.");
     }
     feedbackEl.innerHTML = `<p>${recommendations.join('</p><p>')}</p>`;
 }
@@ -447,40 +479,63 @@ function showReview() {
 
 function buildReviewGrid() {
     document.getElementById('review-grid').innerHTML = activeQuestions.map((q, i) => {
-        const isCorrect = userAnswers[q.id] === q.correctAnswer;
-        const btnClass = userAnswers.hasOwnProperty(q.id) ? (isCorrect ? 'review-correct' : 'review-incorrect') : '';
+        const isAnswered = userAnswers.hasOwnProperty(q.id);
+        const isCorrect = isAnswered && userAnswers[q.id] === q.correctAnswer;
+        let btnClass = '';
+        if (isAnswered) {
+            btnClass = isCorrect ? 'review-correct' : 'review-incorrect';
+        }
         return `<button class="q-btn ${btnClass}" onclick="loadReviewQuestion(${i})">${i + 1}</button>`;
     }).join('');
 }
 
 function loadReviewQuestion(index) {
+    if (index < 0 || index >= activeQuestions.length) return;
     currentReviewIndex = index;
     const q = activeQuestions[index];
     const userAnswer = userAnswers[q.id];
-    const isCorrect = userAnswer === q.correctAnswer;
+    const isAnswered = userAnswers.hasOwnProperty(q.id);
+    const isCorrect = isAnswered && userAnswer === q.correctAnswer;
 
-    document.getElementById('review-question-number-category-mobile').textContent = `Soal ${index + 1}`;
+    document.getElementById('review-question-number-category-mobile').textContent = `Pembahasan Soal ${index + 1}`;
     document.getElementById('review-question-text').innerHTML = q.question.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-    document.getElementById('review-explanation-text').textContent = q.pembahasan || "Pembahasan belum tersedia.";
+    document.getElementById('review-explanation-text').textContent = q.pembahasan || "Pembahasan untuk soal ini belum tersedia.";
     
     const banner = document.getElementById('review-status-banner');
     banner.className = 'review-status-banner'; // Reset
-    if (userAnswer) {
+    if (isAnswered) {
         banner.classList.add(isCorrect ? 'correct' : 'incorrect');
-        banner.innerHTML = `<i class="fas fa-check-circle"></i> Jawaban Anda ${isCorrect ? 'Benar' : 'Salah'}`;
+        banner.innerHTML = `<i class="fas ${isCorrect ? 'fa-check-circle' : 'fa-times-circle'}"></i> Jawaban Anda <strong>${isCorrect ? 'BENAR' : 'SALAH'}</strong>`;
     } else {
-        banner.innerHTML = `Soal ini tidak dijawab`;
+        banner.innerHTML = `<i class="fas fa-minus-circle"></i> Soal ini tidak Anda jawab`;
     }
 
-    const reviewOptions = document.getElementById('review-options-container');
-    reviewOptions.innerHTML = q.options.map((option, i) => {
+    const reviewOptionsContainer = document.getElementById('review-options-container');
+    reviewOptionsContainer.innerHTML = q.options.map((option, i) => {
         const label = String.fromCharCode(65 + i).toLowerCase();
-        let className = 'review-option';
-        if (label === q.correctAnswer) className += ' correct-answer';
-        else if (label === userAnswer) className += ' user-incorrect';
-        return `<div class="${className}"><span>${option}</span></div>`;
+        let optionClass = 'option';
+        
+        // Style for correct answer
+        if (label === q.correctAnswer) {
+            optionClass += ' review-correct-answer';
+        }
+        
+        // Style for user's incorrect answer
+        if (isAnswered && !isCorrect && label === userAnswer) {
+            optionClass += ' review-user-incorrect';
+        }
+
+        return `
+            <div class="${optionClass}">
+                <span class="option-label">${String.fromCharCode(65 + i)}</span>
+                <span>${option}</span>
+            </div>
+        `;
     }).join('');
 
+    // Update nav buttons
+    document.getElementById('review-prev-btn').disabled = index === 0;
+    document.getElementById('review-next-btn').disabled = index === activeQuestions.length - 1;
     dom.reviewSidebar.classList.remove('open');
 }
 
@@ -496,16 +551,29 @@ function downloadPDF() {
     const { jsPDF } = window.jspdf;
     const report = document.getElementById('report-container');
     const originalWidth = report.style.width;
+    const originalShadow = report.style.boxShadow;
+    
+    // Prepare for canvas capture
     report.style.width = '800px';
+    report.style.boxShadow = 'none'; // Remove shadow for cleaner PDF
 
     html2canvas(report, { scale: 2, useCORS: true }).then(canvas => {
+        // Restore original style
         report.style.width = originalWidth;
+        report.style.boxShadow = originalShadow;
+
         const imgData = canvas.toDataURL('image/png');
         const pdf = new jsPDF('p', 'mm', 'a4'); 
         const pdfWidth = pdf.internal.pageSize.getWidth();
         const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
         
         pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-        pdf.save(`Laporan-TOPintar-${participantName.replace(/\s/g, '_')}.pdf`);
+        pdf.save(`Laporan-Hasil-${participantName.replace(/\s/g, '_')}.pdf`);
+    }).catch(err => {
+        console.error("Gagal membuat PDF:", err);
+        alert("Maaf, terjadi kesalahan saat membuat file PDF.");
+        // Restore original style even on error
+        report.style.width = originalWidth;
+        report.style.boxShadow = originalShadow;
     });
 }
