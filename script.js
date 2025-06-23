@@ -1,55 +1,38 @@
-// script.js (FINAL REVISED VERSION)
+// script.js
 
-// -----------------------------------------------------------------------------
-// 1. GLOBAL STATE & CONFIGURATION
-// -----------------------------------------------------------------------------
+// --- GLOBAL STATE & CONFIGURATION ---
 let config = {};
 let allQuestions = [];
 let activeQuestions = [];
 let currentQuestionIndex = 0;
 let userAnswers = {};
+let flaggedQuestions = new Set();
 let timerInterval;
 let participantName = '';
+let totalTestTimeMinutes;
 let testStartTime;
-let totalTestTimeMinutes = 0;
-let currentReviewIndex = 0;
 
-// Anti-Cheat Tracker
+// --- DOM ELEMENTS ---
+const screens = {
+    login: document.getElementById('login-screen'),
+    welcome: document.getElementById('welcome-screen'),
+    selection: document.getElementById('selection-screen'),
+    instruction: document.getElementById('instruction-screen'),
+    test: document.getElementById('test-screen'),
+    results: document.getElementById('results-screen'),
+    review: document.getElementById('review-screen')
+};
+
+// --- ANTI-CHEAT TRACKER ---
 let violationTracker = {
     tabChanges: 0,
+    copyAttempts: 0,
     devToolsOpened: false,
     sessionActive: false,
     monitoringInterval: null
 };
 
-// DOM Element Cache
-const dom = {
-    screens: {
-        login: document.getElementById('login-screen'),
-        welcome: document.getElementById('welcome-screen'),
-        selection: document.getElementById('selection-screen'),
-        instruction: document.getElementById('instruction-screen'),
-        test: document.getElementById('test-screen'),
-        results: document.getElementById('results-screen'),
-        review: document.getElementById('review-screen')
-    },
-    sidebar: document.querySelector('#test-screen .sidebar'),
-    questionText: document.getElementById('question-text'),
-    optionsContainer: document.getElementById('options-container'),
-    questionGrid: document.getElementById('question-grid'),
-    prevBtn: document.getElementById('prev-btn'),
-    nextBtn: document.getElementById('next-btn'),
-    mobileTimer: document.getElementById('timer-mobile'),
-    desktopTimer: document.getElementById('timer-desktop'),
-    progressBar: document.getElementById('progress-bar'),
-    mobileQuestionInfo: document.getElementById('question-number-category-mobile'),
-    reviewSidebar: document.getElementById('review-sidebar')
-};
-
-
-// -----------------------------------------------------------------------------
-// 2. INITIALIZATION & APP FLOW
-// -----------------------------------------------------------------------------
+// --- INITIALIZATION ---
 document.addEventListener("DOMContentLoaded", initApp);
 
 async function initApp() {
@@ -57,63 +40,55 @@ async function initApp() {
         const response = await fetch('config.json');
         if (!response.ok) throw new Error('Network response was not ok');
         config = await response.json();
-        
         applyBranding();
-        setupEventListeners();
         
-        // Ensure a clean start by hiding all screens.
-        Object.values(dom.screens).forEach(s => s.classList.remove('active'));
-
-        if (config.access?.required) {
+        if (config.access && config.access.required) {
             showScreen('login');
         } else {
             showScreen('welcome');
         }
     } catch (error) {
-        console.error("Fatal Error: Failed to load configuration.", error);
-        document.body.innerHTML = `<div style="padding: 2rem; text-align: center;"><h1>Error</h1><p>Gagal memuat file konfigurasi aplikasi (config.json). Pastikan file ada dan valid.</p></div>`;
+        console.error("Failed to load configuration:", error);
+        document.body.innerHTML = "<h1>Error: Gagal memuat konfigurasi aplikasi. Pastikan file `config.json` ada dan valid.</h1>";
     }
 }
 
-// Robust screen visibility function to prevent overlaps.
-function showScreen(screenName) {
-    for (const key in dom.screens) {
-        dom.screens[key].classList.remove('active');
-    }
-    if (dom.screens[screenName]) {
-        dom.screens[screenName].classList.add('active');
-    } else {
-        console.error(`Attempted to show a non-existent screen: ${screenName}`);
-    }
-}
-
-function setupEventListeners() {
-    document.getElementById('menu-toggle-btn').addEventListener('click', () => dom.sidebar.classList.add('open'));
-    document.getElementById('close-sidebar-btn').addEventListener('click', () => dom.sidebar.classList.remove('open'));
-    document.getElementById('review-menu-toggle-btn').addEventListener('click', () => dom.reviewSidebar.classList.add('open'));
-    document.getElementById('review-close-sidebar-btn').addEventListener('click', () => dom.reviewSidebar.classList.remove('open'));
-}
-
-// -----------------------------------------------------------------------------
-// 3. BRANDING & PRE-TEST SETUP
-// -----------------------------------------------------------------------------
 function applyBranding() {
     document.title = config.branding.title;
-    ['login-title', 'welcome-title'].forEach(id => document.getElementById(id).textContent = config.branding.title);
-    ['login-subtitle', 'welcome-subtitle'].forEach(id => document.getElementById(id).textContent = config.branding.subtitle);
-    document.getElementById('report-main-title').textContent = `Laporan Hasil ${config.branding.title}`;
+    document.getElementById('login-title').textContent = config.branding.title;
+    document.getElementById('login-subtitle').textContent = config.branding.subtitle;
+    document.getElementById('welcome-title').textContent = config.branding.title;
+    document.getElementById('welcome-subtitle').textContent = config.branding.subtitle;
+    document.getElementById('welcome-disclaimer').innerHTML = config.branding.disclaimer;
+    document.getElementById('report-main-title').textContent = `LAPORAN HASIL UJIAN MANDIRI TOPINTAR`;
     document.getElementById('report-subtitle').textContent = config.branding.subtitle;
-    document.getElementById('report-developer').textContent = `Hormat kami, ${config.branding.developer}`;
+    document.getElementById('report-developer').textContent = config.branding.developer;
 }
 
+function showScreen(screenName) {
+    Object.values(screens).forEach(s => s.classList.remove('active'));
+    if(screens[screenName]) {
+        screens[screenName].classList.add('active');
+    }
+}
+
+// --- UTILITY FUNCTIONS ---
+function parseMarkdown(text) {
+    // Simple parser for **bold** text
+    return text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+}
+
+// --- AUTH & SELECTION ---
 function handleLogin() {
     const codeInput = document.getElementById('access-code');
     const errorEl = document.getElementById('login-error');
-    if (config.access.validCodes.includes(codeInput.value.trim())) {
-        errorEl.style.display = 'none';
+    const enteredCode = codeInput.value.trim();
+
+    if (config.access.validCodes.includes(enteredCode)) {
         showScreen('welcome');
+        errorEl.style.display = 'none';
     } else {
-        errorEl.textContent = 'Kode Akses tidak valid.';
+        errorEl.textContent = 'Kode Akses tidak valid. Silakan coba lagi.';
         errorEl.style.display = 'block';
     }
 }
@@ -121,7 +96,7 @@ function handleLogin() {
 function prepareTest() {
     participantName = document.getElementById('participant-name').value.trim();
     if (participantName === "") {
-        alert("Nama lengkap tidak boleh kosong.");
+        alert("Nama tidak boleh kosong.");
         return;
     }
     buildBatchSelectionScreen();
@@ -130,15 +105,21 @@ function prepareTest() {
 function buildBatchSelectionScreen() {
     const grid = document.getElementById('selection-grid');
     grid.innerHTML = '';
+    
     document.getElementById('selection-title').textContent = 'Pilih Batch Ujian';
     document.getElementById('selection-description').textContent = 'Setiap batch berisi paket soal yang berbeda.';
     document.getElementById('back-to-welcome-btn').style.display = 'none';
+
     config.batches.forEach(batch => {
         const btn = document.createElement('button');
-        btn.className = 'selection-btn' + (batch.status === 'locked' ? ' locked' : '');
+        btn.className = 'selection-btn';
         btn.innerHTML = `<i class="fas fa-layer-group"></i><strong>${batch.title}</strong><span>${batch.description}</span>`;
-        if (batch.status !== 'locked') btn.onclick = () => selectBatch(batch);
-        else btn.disabled = true;
+        if (batch.status === 'locked') {
+            btn.classList.add('locked');
+            btn.disabled = true;
+        } else {
+            btn.onclick = () => selectBatch(batch);
+        }
         grid.appendChild(btn);
     });
     showScreen('selection');
@@ -152,168 +133,159 @@ async function selectBatch(batch) {
         analyzeAndBuildModeScreen();
     } catch (error) {
         console.error(`Failed to load batch file:`, error);
-        alert('Gagal memuat data soal untuk batch ini.');
+        alert('Gagal memuat data soal. Silakan periksa path file di config.json.');
     }
 }
 
 function analyzeAndBuildModeScreen() {
     const grid = document.getElementById('selection-grid');
     grid.innerHTML = '';
+    
     document.getElementById('selection-title').textContent = 'Pilih Mode Ujian';
-    document.getElementById('selection-description').textContent = 'Mode Ujian Lengkap akan dimonitor oleh sistem.';
+    document.getElementById('selection-description').textContent = 'Ujian Lengkap akan dimonitor oleh sistem anti-kecurangan.';
     document.getElementById('back-to-welcome-btn').style.display = 'inline-flex';
-    const categories = allQuestions.reduce((acc, q) => {
-        const cat = q.main_category || 'Lainnya';
-        acc[cat] = (acc[cat] || 0) + 1;
-        return acc;
-    }, {});
-    grid.appendChild(createModeButton('all', 'Ujian Lengkap', allQuestions.length, 30, 'fas fa-star'));
-    Object.entries(categories).forEach(([name, count]) => {
-        grid.appendChild(createModeButton(name, name, count, 15, getCategoryIcon(name)));
+
+    const categories = {};
+    allQuestions.forEach(q => {
+        if (!categories[q.main_category]) {
+            categories[q.main_category] = { count: 0, icon: getCategoryIcon(q.main_category) };
+        }
+        categories[q.main_category].count++;
     });
-    showScreen('selection');
+
+    const allBtn = createModeButton('all', 'Ujian Lengkap', allQuestions.length, 30, 'fas fa-star');
+    grid.appendChild(allBtn);
+
+    for (const catName in categories) {
+        const cat = categories[catName];
+        const btn = createModeButton(catName, catName, cat.count, 15, cat.icon);
+        grid.appendChild(btn);
+    }
 }
 
 function createModeButton(mode, title, count, time, icon) {
     const btn = document.createElement('button');
     btn.className = 'selection-btn';
     btn.innerHTML = `<i class="${icon}"></i><strong>${title}</strong><span>${count} Soal - ${time} Menit</span>`;
-    btn.onclick = () => startTest(mode, time);
+    btn.onclick = () => startTest(mode);
     return btn;
 }
 
 function getCategoryIcon(cat) {
-    const map = { literasi: 'fas fa-book-open', numerasi: 'fas fa-calculator' };
+    const map = { literasi: 'fas fa-book-open', numerasi: 'fas fa-calculator', sains: 'fas fa-flask' };
     return map[cat.toLowerCase()] || 'fas fa-question-circle';
 }
 
-function goBackToWelcome() { showScreen('welcome'); }
+function goBackToWelcome() {
+    showScreen('welcome');
+}
 
-// -----------------------------------------------------------------------------
-// 4. CORE TEST LOGIC
-// -----------------------------------------------------------------------------
-function startTest(mode, time) {
-    totalTestTimeMinutes = time;
-    activeQuestions = mode === 'all' ? allQuestions : allQuestions.filter(q => q.main_category === mode);
-    if (config.security?.antiCheatEnabled && mode === config.security.applyToMode) {
-        alert("PERHATIAN: Sesi Ujian Lengkap ini dipantau oleh sistem. Aktivitas mencurigakan akan tercatat pada laporan akhir.");
+// --- TEST LOGIC ---
+function startTest(mode) {
+    if (mode === 'all') {
+        activeQuestions = allQuestions;
+        totalTestTimeMinutes = 30;
+    } else {
+        activeQuestions = allQuestions.filter(q => q.main_category === mode);
+        totalTestTimeMinutes = 15;
+    }
+
+    if (config.security.antiCheatEnabled && mode === config.security.applyToMode) {
+        alert("PERHATIAN: Sesi Ujian Lengkap ini dipantau oleh sistem. Aktivitas seperti meninggalkan tab atau menyalin teks akan tercatat pada laporan akhir. Tetap fokus pada jendela ujian.");
         initializeAntiCheatListeners();
     }
+
+    document.getElementById('instruction-title').textContent = `Petunjuk Pengerjaan Ujian`;
     document.getElementById('instruction-list').innerHTML = `
         <li>Anda akan mengerjakan <strong>${activeQuestions.length} soal</strong>.</li>
         <li>Waktu pengerjaan Anda adalah <strong>${totalTestTimeMinutes} menit</strong>.</li>
         <li>Waktu akan berjalan otomatis saat tes dimulai.</li>
-        <li>Pastikan Anda menekan tombol "Selesaikan Tes" jika sudah selesai sebelum waktu habis.</li>`;
+    `;
     showScreen('instruction');
 }
 
 function beginActualTest() {
     currentQuestionIndex = 0;
     userAnswers = {};
-    testStartTime = new Date();
+    flaggedQuestions.clear();
+    clearInterval(timerInterval);
     buildNavigationGrid();
     loadQuestion(0);
     startTimer();
+    testStartTime = new Date();
     showScreen('test');
 }
 
 function startTimer() {
-    clearInterval(timerInterval);
-    const totalTimeSeconds = totalTestTimeMinutes * 60;
-    let timeLeft = totalTimeSeconds;
+    let time = totalTestTimeMinutes * 60;
+    const timerEl = document.getElementById('timer');
+    const progressBar = document.getElementById('progress-bar');
+    
     timerInterval = setInterval(() => {
-        const minutes = Math.floor(timeLeft / 60);
-        const seconds = timeLeft % 60;
-        const timeString = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-        dom.mobileTimer.textContent = timeString;
-        dom.desktopTimer.textContent = timeString;
-        const progress = ((totalTimeSeconds - timeLeft) / totalTimeSeconds) * 100;
-        dom.progressBar.style.width = `${progress}%`;
-        if (--timeLeft < 0) {
+        const minutes = Math.floor(time / 60);
+        const seconds = time % 60;
+        timerEl.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        progressBar.style.width = `${((totalTestTimeMinutes * 60 - time) / (totalTestTimeMinutes * 60)) * 100}%`;
+
+        if (--time < 0) {
             clearInterval(timerInterval);
-            alert("Waktu habis!");
             finishTest();
         }
     }, 1000);
 }
 
 function loadQuestion(index) {
-    if (index < 0 || index >= activeQuestions.length) return;
     currentQuestionIndex = index;
     const q = activeQuestions[index];
-    dom.mobileQuestionInfo.textContent = `Soal ${index + 1}/${activeQuestions.length}`;
-    dom.questionText.innerHTML = q.question.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-    dom.optionsContainer.innerHTML = q.options.map((option, i) => {
-        const optionId = `q${q.id}-o${i}`;
-        const label = String.fromCharCode(65 + i);
-        const isChecked = userAnswers[q.id] === label.toLowerCase() ? 'checked' : '';
-        return `
-            <label for="${optionId}" class="option">
-                <input type="radio" name="q${q.id}" id="${optionId}" value="${label.toLowerCase()}" ${isChecked} style="display:none;">
-                <span class="option-label">${label}</span>
-                <span>${option}</span>
-            </label>
-        `;
-    }).join('');
-    dom.optionsContainer.querySelectorAll('.option').forEach(label => {
-        label.addEventListener('click', () => {
-            const radio = label.querySelector('input[type="radio"]');
-            if (radio) selectAnswer(q.id, radio.value);
-            updateUI();
-        });
+    document.getElementById('question-number-category').textContent = `Soal ${index + 1} dari ${activeQuestions.length} - ${q.category}`;
+    // FIX: Use the markdown parser
+    document.getElementById('question-text').innerHTML = parseMarkdown(q.question);
+    
+    const optionsContainer = document.getElementById('options-container');
+    optionsContainer.innerHTML = '';
+    const optionLabels = ['a', 'b', 'c', 'd', 'e'];
+    q.options.forEach((option, i) => {
+        const label = document.createElement('label');
+        label.className = 'option';
+        label.innerHTML = `<input type="radio" name="option" value="${optionLabels[i]}"><span class="option-label">${optionLabels[i].toUpperCase()}</span><span>${option}</span>`;
+        label.onclick = () => selectAnswer(q.id, optionLabels[i]);
+        optionsContainer.appendChild(label);
     });
+    
+    if (userAnswers[q.id]) {
+        const radio = optionsContainer.querySelector(`input[value="${userAnswers[q.id]}"]`);
+        if(radio) radio.checked = true;
+    }
     updateUI();
-    dom.sidebar.classList.remove('open');
 }
 
 function updateUI() {
-    dom.prevBtn.disabled = currentQuestionIndex === 0;
-    dom.nextBtn.disabled = currentQuestionIndex === activeQuestions.length - 1;
-    dom.questionGrid.querySelectorAll('.q-btn').forEach((btn, i) => {
-        btn.classList.toggle('current', i === currentQuestionIndex);
-        btn.classList.toggle('answered', !!userAnswers[activeQuestions[i].id]);
+    document.querySelectorAll('#question-grid .q-btn').forEach((btn, i) => {
+        btn.className = 'q-btn';
+        if (i === currentQuestionIndex) btn.classList.add('current');
+        if (userAnswers[activeQuestions[i].id]) btn.classList.add('answered');
+        if (flaggedQuestions.has(activeQuestions[i].id)) btn.classList.add('flagged');
     });
+
+    document.getElementById('prev-btn').disabled = currentQuestionIndex === 0;
+    document.getElementById('next-btn').disabled = currentQuestionIndex === activeQuestions.length - 1;
 }
 
 function buildNavigationGrid() {
-    dom.questionGrid.innerHTML = activeQuestions.map((_, index) => 
+    document.getElementById('question-grid').innerHTML = activeQuestions.map((_, index) => 
         `<button class="q-btn" onclick="loadQuestion(${index})">${index + 1}</button>`
     ).join('');
 }
 
-function selectAnswer(questionId, answer) {
-    userAnswers[questionId] = answer;
-    // Visually check the selected radio button
-    const q = activeQuestions[currentQuestionIndex];
-    dom.optionsContainer.innerHTML = q.options.map((option, i) => {
-        const optionId = `q${q.id}-o${i}`;
-        const label = String.fromCharCode(65 + i);
-        const isChecked = userAnswers[q.id] === label.toLowerCase() ? 'checked' : '';
-        return `
-            <label for="${optionId}" class="option">
-                <input type="radio" name="q${q.id}" id="${optionId}" value="${label.toLowerCase()}" ${isChecked} style="display:none;">
-                <span class="option-label">${label}</span>
-                <span>${option}</span>
-            </label>
-        `;
-    }).join('');
-    dom.optionsContainer.querySelectorAll('.option').forEach(label => {
-        label.addEventListener('click', () => {
-            const radio = label.querySelector('input[type="radio"]');
-            if (radio) selectAnswer(q.id, radio.value);
-            updateUI();
-        });
-    });
-}
+function selectAnswer(questionId, answer) { userAnswers[questionId] = answer; }
 function nextQuestion() { if (currentQuestionIndex < activeQuestions.length - 1) loadQuestion(currentQuestionIndex + 1); }
 function prevQuestion() { if (currentQuestionIndex > 0) loadQuestion(currentQuestionIndex - 1); }
-
-function confirmFinish() {
-    // FIX: Add confirmation dialog for better UX.
-    if (confirm("Apakah Anda yakin ingin menyelesaikan sesi ini? Jawaban tidak dapat diubah kembali.")) {
-        finishTest();
-    }
+function toggleFlag() {
+    const currentId = activeQuestions[currentQuestionIndex].id;
+    flaggedQuestions.has(currentId) ? flaggedQuestions.delete(currentId) : flaggedQuestions.add(currentId);
+    updateUI();
 }
+function confirmFinish() { if (confirm("Apakah Anda yakin ingin menyelesaikan sesi ini?")) finishTest(); }
 
 function finishTest() {
     clearInterval(timerInterval);
@@ -322,118 +294,82 @@ function finishTest() {
     showScreen('results');
 }
 
-// -----------------------------------------------------------------------------
-// 5. REPORTING & ANTI-CHEAT
-// -----------------------------------------------------------------------------
+// --- ANTI-CHEAT ---
+function initializeAntiCheatListeners() {
+    violationTracker = { tabChanges: 0, copyAttempts: 0, devToolsOpened: false, sessionActive: true, monitoringInterval: null };
+    window.addEventListener('blur', handleVisibilityChange);
+    document.addEventListener('copy', handleCopy);
+    violationTracker.monitoringInterval = setInterval(() => {
+        if ((window.outerWidth - window.innerWidth > 160) || (window.outerHeight - window.innerHeight > 160)) {
+            violationTracker.devToolsOpened = true;
+        }
+    }, 1000);
+}
+
+function removeAntiCheatListeners() {
+    if (!violationTracker.sessionActive) return;
+    window.removeEventListener('blur', handleVisibilityChange);
+    document.removeEventListener('copy', handleCopy);
+    clearInterval(violationTracker.monitoringInterval);
+    violationTracker.sessionActive = false;
+}
+
+const handleVisibilityChange = () => { if (violationTracker.sessionActive) violationTracker.tabChanges++; };
+const handleCopy = e => { if (violationTracker.sessionActive) { e.preventDefault(); violationTracker.copyAttempts++; } };
+
+// --- REPORTING & REVIEW ---
 function generateReport() {
     // Basic Info
     document.getElementById('report-name').textContent = participantName.toUpperCase();
-    document.getElementById('report-session-id').textContent = 'SESI-' + Date.now();
-    document.getElementById('report-date').textContent = new Date().toLocaleDateString('id-ID', { dateStyle: 'long', timeStyle: 'short' });
+    document.getElementById('report-session-id').textContent = 'TKA-' + Date.now();
+    document.getElementById('report-date').textContent = new Date().toLocaleDateString('id-ID', { dateStyle: 'long' });
+
+    // Duration
     const durationMs = new Date() - testStartTime;
-    document.getElementById('report-duration').textContent = `${Math.floor(durationMs / 60000)} menit ${Math.floor((durationMs % 60000) / 1000)} detik`;
+    const minutes = Math.floor(durationMs / 60000);
+    const seconds = Math.floor((durationMs % 60000) / 1000);
+    document.getElementById('report-duration').textContent = `${minutes} menit ${seconds} detik`;
     
     // Scoring
     let correctAnswers = 0;
-    activeQuestions.forEach(q => { if (userAnswers[q.id] === q.correctAnswer) correctAnswers++; });
-    const answeredCount = Object.keys(userAnswers).length;
+    activeQuestions.forEach(q => {
+        if (userAnswers[q.id] === q.correctAnswer) correctAnswers++;
+    });
     const score = activeQuestions.length > 0 ? Math.round((correctAnswers / activeQuestions.length) * 100) : 0;
-    
-    // UI Update for Score & Donut Chart
-    const scoreDisplay = document.querySelector('#summary-card .score-display');
-    scoreDisplay.style.setProperty('--score', score); // Pass score to CSS for the chart
+    const answeredCount = Object.keys(userAnswers).length;
+
     document.getElementById('final-score').textContent = score;
-    const predicate = score >= 85 ? 'LUAR BIASA' : score >= 70 ? 'SANGAT BAIK' : score >= 55 ? 'BAIK' : 'PERLU DITINGKATKAN';
-    document.getElementById('score-predicate').textContent = predicate;
+    document.getElementById('score-predicate').textContent = score >= 80 ? 'SANGAT BAIK' : score >= 60 ? 'BAIK' : 'PERLU DITINGKATKAN';
     document.getElementById('correct-count').textContent = correctAnswers;
     document.getElementById('incorrect-count').textContent = answeredCount - correctAnswers;
     document.getElementById('unanswered-count').textContent = activeQuestions.length - answeredCount;
 
-    if (score >= 85 && typeof confetti === 'function') {
-        confetti({ particleCount: 150, spread: 90, origin: { y: 0.6 } });
-    }
-    
-    // Generate other report sections
-    generateCategoryAnalysis();
-    generateViolationReport();
-    generateRecommendations();
-}
-
-function generateViolationReport() { /* Unchanged from previous version */
-    const section = document.getElementById('violation-report-section');
+    // Violation Report
+    const violationSection = document.getElementById('violation-report-section');
     const violationDetails = document.getElementById('violation-details');
-    violationDetails.innerHTML = ''; let hasViolations = false;
+    violationDetails.innerHTML = '';
+    let hasViolations = false;
+    
     if (violationTracker.tabChanges > 0) {
         violationDetails.innerHTML += `<div class="behavior-item">Keluar dari tab/jendela ujian terdeteksi: <strong>${violationTracker.tabChanges} kali</strong></div>`;
         hasViolations = true;
     }
     if (violationTracker.devToolsOpened) {
-        violationDetails.innerHTML += `<div class="behavior-item">Developer Tools (Inspect Element) terdeteksi terbuka.</div>`;
+        violationDetails.innerHTML += `<div class="behavior-item">Developer Tools (Inspect Element) terdeteksi terbuka selama ujian.</div>`;
         hasViolations = true;
     }
-    section.style.display = hasViolations ? 'block' : 'none';
+    violationSection.style.display = hasViolations ? 'block' : 'none';
+    
+    // Category Analysis
+    // ... Implement category analysis logic if needed, this part is complex and can be added later.
+    // For now, we'll hide the table if it's empty.
+    document.getElementById('analysis-table').style.display = 'none';
+
+    // Recommendations (Placeholder)
+    document.getElementById('recommendation-feedback').innerHTML = `<p>Terus berlatih untuk meningkatkan kecepatan dan ketepatan Anda. Fokus pada soal-soal yang Anda jawab salah saat melakukan review.</p>`;
 }
 
-function generateCategoryAnalysis() { /* Unchanged from previous version */
-    const analysisCard = document.getElementById('analysis-card');
-    const analysisContainer = document.getElementById('analysis-container');
-    const categoryStats = {}; activeQuestions.forEach(q => {
-        const cat = q.main_category || 'Lainnya';
-        if (!categoryStats[cat]) categoryStats[cat] = { correct: 0, total: 0 };
-        categoryStats[cat].total++;
-        if (userAnswers[q.id] === q.correctAnswer) categoryStats[cat].correct++;
-    });
-    if (Object.keys(categoryStats).length > 1) {
-        analysisContainer.innerHTML = Object.entries(categoryStats).map(([name, stats]) => {
-            const accuracy = stats.total > 0 ? Math.round((stats.correct / stats.total) * 100) : 0;
-            return `<div class="category-item"><div class="category-info"><strong>${name}</strong><span>${stats.correct}/${stats.total} Benar (${accuracy}%)</span></div><div class="accuracy-bar-container"><div class="accuracy-bar" style="width: ${accuracy}%;"></div></div></div>`;
-        }).join('');
-        analysisCard.style.display = 'block';
-    } else { analysisCard.style.display = 'none'; }
-    return categoryStats;
-}
 
-function generateRecommendations() { /* Unchanged from previous version */
-    const feedbackEl = document.getElementById('recommendation-feedback');
-    const stats = generateCategoryAnalysis(); let recommendations = [];
-    const sortedCats = Object.entries(stats).sort(([,a], [,b]) => (a.correct/a.total) - (b.correct/b.total));
-    if (sortedCats.length > 0) {
-        const weakest = sortedCats[0];
-        if ((weakest[1].correct / weakest[1].total) < 0.6) {
-            recommendations.push(`Kinerja Anda di kategori <strong>${weakest[0]}</strong> perlu perhatian lebih. Fokus pelajari kembali soal-soal di area ini.`);
-        }
-        if (sortedCats.length > 1) {
-            const strongest = sortedCats[sortedCats.length - 1];
-            if ((strongest[1].correct / strongest[1].total) >= 0.8 && strongest[0] !== weakest[0]) {
-                recommendations.push(`Anda menunjukkan penguasaan yang sangat baik pada kategori <strong>${strongest[0]}</strong>. Pertahankan!`);
-            }
-        }
-    }
-    if (recommendations.length === 0) {
-        recommendations.push("Performa Anda secara umum sudah cukup baik dan seimbang. Terus berlatih untuk meningkatkan kecepatan dan konsistensi.");
-    }
-    feedbackEl.innerHTML = `<p>${recommendations.join('</p><p>')}</p>`;
-}
-
-function initializeAntiCheatListeners() { /* Unchanged from previous version */
-    violationTracker = { tabChanges: 0, devToolsOpened: false, sessionActive: true, monitoringInterval: null };
-    window.addEventListener('blur', () => { if (violationTracker.sessionActive) violationTracker.tabChanges++; });
-    violationTracker.monitoringInterval = setInterval(() => {
-        if ((window.outerWidth - window.innerWidth > 160) || (window.outerHeight - window.innerHeight > 160)) {
-            if (!violationTracker.devToolsOpened) violationTracker.devToolsOpened = true;
-        }
-    }, 1000);
-}
-function removeAntiCheatListeners() { /* Unchanged from previous version */
-    if (!violationTracker.sessionActive) return;
-    window.removeEventListener('blur', () => {});
-    clearInterval(violationTracker.monitoringInterval);
-    violationTracker.sessionActive = false;
-}
-
-// -----------------------------------------------------------------------------
-// 6. REVIEW LOGIC
-// -----------------------------------------------------------------------------
 function showReview() {
     buildReviewGrid();
     loadReviewQuestion(0);
@@ -441,74 +377,71 @@ function showReview() {
 }
 
 function buildReviewGrid() {
-    document.getElementById('review-grid').innerHTML = activeQuestions.map((q, i) => {
+    const grid = document.getElementById('review-grid');
+    grid.innerHTML = activeQuestions.map((q, index) => {
+        const isCorrect = userAnswers[q.id] === q.correctAnswer;
         const isAnswered = userAnswers.hasOwnProperty(q.id);
-        const isCorrect = isAnswered && userAnswers[q.id] === q.correctAnswer;
-        let btnClass = isAnswered ? (isCorrect ? 'review-correct' : 'review-incorrect') : '';
-        return `<button class="q-btn ${btnClass}" onclick="loadReviewQuestion(${i})">${i + 1}</button>`;
+        const btnClass = isAnswered ? (isCorrect ? 'review-correct' : 'review-incorrect') : '';
+        return `<button class="q-btn ${btnClass}" onclick="loadReviewQuestion(${index})">${index + 1}</button>`;
     }).join('');
 }
 
 function loadReviewQuestion(index) {
-    if (index < 0 || index >= activeQuestions.length) return;
     currentReviewIndex = index;
     const q = activeQuestions[index];
     const userAnswer = userAnswers[q.id];
-    const isAnswered = userAnswers.hasOwnProperty(q.id);
-    const isCorrect = isAnswered && userAnswer === q.correctAnswer;
+    const isCorrect = userAnswer === q.correctAnswer;
 
-    document.getElementById('review-question-number-category-mobile').textContent = `Pembahasan Soal ${index + 1}`;
-    document.getElementById('review-question-text').innerHTML = q.question.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    document.getElementById('review-question-number-category').textContent = `Soal ${index + 1} - ${q.category}`;
+    document.getElementById('review-question-text').innerHTML = parseMarkdown(q.question);
     document.getElementById('review-explanation-text').textContent = q.pembahasan || "Pembahasan untuk soal ini belum tersedia.";
     
     const banner = document.getElementById('review-status-banner');
-    banner.className = 'review-status-banner';
-    if (isAnswered) {
-        banner.classList.add(isCorrect ? 'correct' : 'incorrect');
-        banner.innerHTML = `<i class="fas ${isCorrect ? 'fa-check-circle' : 'fa-times-circle'}"></i> Jawaban Anda <strong>${isCorrect ? 'BENAR' : 'SALAH'}</strong>`;
+    if (userAnswer) {
+        banner.className = 'review-status-banner ' + (isCorrect ? 'correct' : 'incorrect');
+        banner.innerHTML = `<i class="fas fa-check-circle"></i> Jawaban Anda ${isCorrect ? 'Benar' : 'Salah'}`;
     } else {
-        banner.innerHTML = `<i class="fas fa-minus-circle"></i> Soal ini tidak Anda jawab`;
+        banner.className = 'review-status-banner'; // Neutral
+        banner.innerHTML = `Soal ini tidak dijawab`;
     }
 
-    const reviewOptionsContainer = document.getElementById('review-options-container');
-    reviewOptionsContainer.innerHTML = q.options.map((option, i) => {
-        const label = String.fromCharCode(65 + i).toLowerCase();
-        let optionClass = 'option';
-        if (label === q.correctAnswer) optionClass += ' review-correct-answer';
-        if (isAnswered && !isCorrect && label === userAnswer) optionClass += ' review-user-incorrect';
-        return `<div class="${optionClass}"><span class="option-label">${String.fromCharCode(65 + i)}</span><span>${option}</span></div>`;
-    }).join('');
+    const optionsContainer = document.getElementById('review-options-container');
+    optionsContainer.innerHTML = '';
+    const optionLabels = ['a', 'b', 'c', 'd', 'e'];
+    q.options.forEach((optionText, i) => {
+        const optionValue = optionLabels[i];
+        const div = document.createElement('div');
+        div.className = 'review-option';
+        if (optionValue === q.correctAnswer) div.classList.add('correct-answer');
+        else if (optionValue === userAnswer) div.classList.add('user-incorrect');
+        div.innerHTML = `<span>${optionText}</span>`;
+        optionsContainer.appendChild(div);
+    });
+    updateReviewUI();
+}
 
-    document.getElementById('review-prev-btn').disabled = index === 0;
-    document.getElementById('review-next-btn').disabled = index === activeQuestions.length - 1;
-    dom.reviewSidebar.classList.remove('open');
+function updateReviewUI() {
+    document.getElementById('review-prev-btn').disabled = currentReviewIndex === 0;
+    document.getElementById('review-next-btn').disabled = currentReviewIndex === activeQuestions.length - 1;
+    document.querySelectorAll('#review-grid .q-btn').forEach((btn, i) => {
+        btn.classList.toggle('current-review', i === currentReviewIndex);
+    });
 }
 
 function reviewPrevQuestion() { if (currentReviewIndex > 0) loadReviewQuestion(currentReviewIndex - 1); }
 function reviewNextQuestion() { if (currentReviewIndex < activeQuestions.length - 1) loadReviewQuestion(currentReviewIndex + 1); }
 
-// -----------------------------------------------------------------------------
-// 7. UTILITY & MISC
-// -----------------------------------------------------------------------------
 function tryAgain() { window.location.reload(); }
 
 function downloadPDF() {
     const { jsPDF } = window.jspdf;
     const report = document.getElementById('report-container');
-    const originalShadow = report.style.boxShadow;
-    report.style.boxShadow = 'none'; // Remove shadow for cleaner PDF capture
-
-    html2canvas(report, { scale: 2, useCORS: true, backgroundColor: null }).then(canvas => {
-        report.style.boxShadow = originalShadow; // Restore shadow
+    html2canvas(report, { scale: 2, useCORS: true }).then(canvas => {
         const imgData = canvas.toDataURL('image/png');
         const pdf = new jsPDF('p', 'mm', 'a4'); 
         const pdfWidth = pdf.internal.pageSize.getWidth();
         const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
         pdf.addImage(imgData, 'PNG', 10, 10, pdfWidth - 20, pdfHeight - 20);
-        pdf.save(`Laporan-Hasil-${participantName.replace(/\s/g, '_')}.pdf`);
-    }).catch(err => {
-        console.error("Gagal membuat PDF:", err);
-        alert("Maaf, terjadi kesalahan saat membuat file PDF.");
-        report.style.boxShadow = originalShadow; // Restore on error
+        pdf.save(`Laporan-TOPintar-${participantName.replace(/\s/g, '_')}.pdf`);
     });
 }
