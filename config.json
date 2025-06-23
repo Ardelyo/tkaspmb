@@ -20,15 +20,15 @@
   "batches": [
     {
       "id": "batch-1",
-      "title": "Batch 1: Paket HOTS Fundamental",
-      "description": "Literasi & Numerasi Tingkat Lanjut",
+      "title": "Batch 1: Standar SMP",
+      "description": "Literasi & Numerasi Tingkat Lanjut untuk Refleksi dan Evaluasi Kemampuan Diri",
       "filePath": "data/batch-1.json",
       "status": "unlocked"
     },
     {
       "id": "batch-2",
-      "title": "Batch 2: Paket Intensif (Segera Hadir)",
-      "description": "Soal-soal variasi materi baru.",
+      "title": "Batch 2: Persiapan TKA (Segera Hadir)",
+      "description": "Soal-soal variasi materi baru untuk persiapan TKA masuk SMA.",
       "filePath": "data/batch-2.json",
       "status": "locked"
     }

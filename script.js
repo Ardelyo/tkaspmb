@@ -23,10 +23,12 @@ const screens = {
     review: document.getElementById('review-screen')
 };
 
-// --- ANTI-CHEAT TRACKER ---
+// --- ANTI-CHEAT TRACKER (ENHANCED) ---
 let violationTracker = {
     tabChanges: 0,
     copyAttempts: 0,
+    rightClicks: 0,      // NEW: Tracks right-click attempts
+    resizes: 0,          // NEW: Tracks window resize events
     devToolsOpened: false,
     sessionActive: false,
     monitoringInterval: null
@@ -74,7 +76,6 @@ function showScreen(screenName) {
 
 // --- UTILITY FUNCTIONS ---
 function parseMarkdown(text) {
-    // Simple parser for **bold** text
     return text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
 }
 
@@ -153,12 +154,14 @@ function analyzeAndBuildModeScreen() {
         categories[q.main_category].count++;
     });
 
-    const allBtn = createModeButton('all', 'Ujian Lengkap', allQuestions.length, 30, 'fas fa-star');
+    const timeForAll = allQuestions.length * 6;
+    const allBtn = createModeButton('all', 'Ujian Lengkap', allQuestions.length, timeForAll, 'fas fa-star');
     grid.appendChild(allBtn);
 
     for (const catName in categories) {
         const cat = categories[catName];
-        const btn = createModeButton(catName, catName, cat.count, 15, cat.icon);
+        const timeForCategory = cat.count * 6;
+        const btn = createModeButton(catName, catName, cat.count, timeForCategory, cat.icon);
         grid.appendChild(btn);
     }
 }
@@ -184,14 +187,14 @@ function goBackToWelcome() {
 function startTest(mode) {
     if (mode === 'all') {
         activeQuestions = allQuestions;
-        totalTestTimeMinutes = 30;
     } else {
         activeQuestions = allQuestions.filter(q => q.main_category === mode);
-        totalTestTimeMinutes = 15;
     }
 
+    totalTestTimeMinutes = activeQuestions.length * 6;
+
     if (config.security.antiCheatEnabled && mode === config.security.applyToMode) {
-        alert("PERHATIAN: Sesi Ujian Lengkap ini dipantau oleh sistem. Aktivitas seperti meninggalkan tab atau menyalin teks akan tercatat pada laporan akhir. Tetap fokus pada jendela ujian.");
+        alert("PERHATIAN: Sesi Ujian Lengkap ini dipantau oleh sistem. Aktivitas seperti meninggalkan tab, klik kanan, atau mengubah ukuran jendela akan tercatat. Tetap fokus pada jendela ujian.");
         initializeAntiCheatListeners();
     }
 
@@ -238,7 +241,6 @@ function loadQuestion(index) {
     currentQuestionIndex = index;
     const q = activeQuestions[index];
     document.getElementById('question-number-category').textContent = `Soal ${index + 1} dari ${activeQuestions.length} - ${q.category}`;
-    // FIX: Use the markdown parser
     document.getElementById('question-text').innerHTML = parseMarkdown(q.question);
     
     const optionsContainer = document.getElementById('options-container');
@@ -294,11 +296,15 @@ function finishTest() {
     showScreen('results');
 }
 
-// --- ANTI-CHEAT ---
+// --- ANTI-CHEAT (ENHANCED) ---
 function initializeAntiCheatListeners() {
-    violationTracker = { tabChanges: 0, copyAttempts: 0, devToolsOpened: false, sessionActive: true, monitoringInterval: null };
+    violationTracker = { tabChanges: 0, copyAttempts: 0, rightClicks: 0, resizes: 0, devToolsOpened: false, sessionActive: true, monitoringInterval: null };
+    
     window.addEventListener('blur', handleVisibilityChange);
     document.addEventListener('copy', handleCopy);
+    document.addEventListener('contextmenu', handleRightClick); // NEW
+    window.addEventListener('resize', handleWindowResize);     // NEW
+
     violationTracker.monitoringInterval = setInterval(() => {
         if ((window.outerWidth - window.innerWidth > 160) || (window.outerHeight - window.innerHeight > 160)) {
             violationTracker.devToolsOpened = true;
@@ -310,14 +316,19 @@ function removeAntiCheatListeners() {
     if (!violationTracker.sessionActive) return;
     window.removeEventListener('blur', handleVisibilityChange);
     document.removeEventListener('copy', handleCopy);
+    document.removeEventListener('contextmenu', handleRightClick); // NEW
+    window.removeEventListener('resize', handleWindowResize);     // NEW
     clearInterval(violationTracker.monitoringInterval);
     violationTracker.sessionActive = false;
 }
 
 const handleVisibilityChange = () => { if (violationTracker.sessionActive) violationTracker.tabChanges++; };
 const handleCopy = e => { if (violationTracker.sessionActive) { e.preventDefault(); violationTracker.copyAttempts++; } };
+const handleRightClick = e => { if (violationTracker.sessionActive) { e.preventDefault(); violationTracker.rightClicks++; } };
+const handleWindowResize = () => { if (violationTracker.sessionActive) violationTracker.resizes++; };
 
-// --- REPORTING & REVIEW ---
+
+// --- REPORTING & REVIEW (ENHANCED) ---
 function generateReport() {
     // Basic Info
     document.getElementById('report-name').textContent = participantName.toUpperCase();
@@ -330,7 +341,7 @@ function generateReport() {
     const seconds = Math.floor((durationMs % 60000) / 1000);
     document.getElementById('report-duration').textContent = `${minutes} menit ${seconds} detik`;
     
-    // Scoring
+    // Overall Scoring
     let correctAnswers = 0;
     activeQuestions.forEach(q => {
         if (userAnswers[q.id] === q.correctAnswer) correctAnswers++;
@@ -344,7 +355,17 @@ function generateReport() {
     document.getElementById('incorrect-count').textContent = answeredCount - correctAnswers;
     document.getElementById('unanswered-count').textContent = activeQuestions.length - answeredCount;
 
-    // Violation Report
+    // Generate Violation Report
+    generateViolationReport();
+
+    // Generate Category Analysis and get the stats for recommendations
+    const categoryStats = generateCategoryAnalysis();
+
+    // Generate Personalized Recommendations based on the analysis
+    generatePersonalizedRecommendations(categoryStats);
+}
+
+function generateViolationReport() {
     const violationSection = document.getElementById('violation-report-section');
     const violationDetails = document.getElementById('violation-details');
     violationDetails.innerHTML = '';
@@ -354,21 +375,103 @@ function generateReport() {
         violationDetails.innerHTML += `<div class="behavior-item">Keluar dari tab/jendela ujian terdeteksi: <strong>${violationTracker.tabChanges} kali</strong></div>`;
         hasViolations = true;
     }
+    if (violationTracker.rightClicks > 0) {
+        violationDetails.innerHTML += `<div class="behavior-item">Mencoba membuka menu klik-kanan: <strong>${violationTracker.rightClicks} kali</strong></div>`;
+        hasViolations = true;
+    }
+    // We check > 1 to allow for an initial automatic resize by the browser
+    if (violationTracker.resizes > 1) { 
+        violationDetails.innerHTML += `<div class="behavior-item">Mengubah ukuran jendela ujian terdeteksi: <strong>${violationTracker.resizes - 1} kali</strong></div>`;
+        hasViolations = true;
+    }
     if (violationTracker.devToolsOpened) {
         violationDetails.innerHTML += `<div class="behavior-item">Developer Tools (Inspect Element) terdeteksi terbuka selama ujian.</div>`;
         hasViolations = true;
     }
     violationSection.style.display = hasViolations ? 'block' : 'none';
-    
-    // Category Analysis
-    // ... Implement category analysis logic if needed, this part is complex and can be added later.
-    // For now, we'll hide the table if it's empty.
-    document.getElementById('analysis-table').style.display = 'none';
-
-    // Recommendations (Placeholder)
-    document.getElementById('recommendation-feedback').innerHTML = `<p>Terus berlatih untuk meningkatkan kecepatan dan ketepatan Anda. Fokus pada soal-soal yang Anda jawab salah saat melakukan review.</p>`;
 }
 
+function generateCategoryAnalysis() {
+    const categoryStats = {};
+
+    activeQuestions.forEach(q => {
+        const category = q.main_category;
+        if (!categoryStats[category]) {
+            categoryStats[category] = { total: 0, correct: 0, icon: getCategoryIcon(category) };
+        }
+        categoryStats[category].total++;
+        if (userAnswers[q.id] === q.correctAnswer) {
+            categoryStats[category].correct++;
+        }
+    });
+
+    const tableBody = document.getElementById('analysis-table-body');
+    tableBody.innerHTML = ''; 
+    let hasAnalysisData = false;
+
+    for (const categoryName in categoryStats) {
+        hasAnalysisData = true;
+        const stats = categoryStats[categoryName];
+        const score = stats.total > 0 ? Math.round((stats.correct / stats.total) * 100) : 0;
+        stats.score = score; // Add score to the stats object for later use
+
+        const incorrectOrEmpty = stats.total - stats.correct;
+        const scoreBarColor = score >= 60 ? '#4CAF50' : (score >= 40 ? '#FFC107' : '#F44336');
+
+        const row = `
+            <tr>
+                <td><i class="${stats.icon} category-icon"></i> ${categoryName.toUpperCase()}</td>
+                <td>${stats.total}</td>
+                <td>${stats.correct}</td>
+                <td>${incorrectOrEmpty}</td>
+                <td class="score-cell">
+                    <div class="score-bar-container">
+                        <div class="score-bar" style="width: ${score}%; background-color: ${scoreBarColor};"></div>
+                    </div>
+                    <span>${score}%</span>
+                </td>
+            </tr>
+        `;
+        tableBody.innerHTML += row;
+    }
+
+    const analysisTable = document.getElementById('analysis-table');
+    analysisTable.style.display = hasAnalysisData ? 'table' : 'none';
+    
+    return categoryStats; // Return data for use in recommendations
+}
+
+function generatePersonalizedRecommendations(categoryStats) {
+    const feedbackEl = document.getElementById('recommendation-feedback');
+    let recommendationsHTML = '<ul>';
+    let weakestCategory = null;
+    let lowestScore = 101;
+    let allGood = true;
+
+    for (const categoryName in categoryStats) {
+        const stats = categoryStats[categoryName];
+        if (stats.score < 60) {
+            allGood = false;
+            if (stats.score < lowestScore) {
+                lowestScore = stats.score;
+                weakestCategory = categoryName;
+            }
+        }
+    }
+
+    if (allGood) {
+        recommendationsHTML += `<li><strong>Kerja bagus!</strong> Performa Anda sangat baik di semua kategori. Pertahankan dan terus berlatih untuk menjaga konsistensi.</li>`;
+    } else {
+        recommendationsHTML += `<li>Secara umum, terus berlatih untuk meningkatkan kecepatan dan ketepatan Anda.</li>`;
+        if (weakestCategory) {
+            recommendationsHTML += `<li>Area utama yang perlu ditingkatkan adalah <strong>${weakestCategory.toUpperCase()}</strong>, di mana skor Anda adalah ${lowestScore}%. Fokuskan latihan Anda pada soal-soal di kategori ini.</li>`;
+        }
+        recommendationsHTML += `<li>Gunakan fitur "Review Ujian" untuk memahami di mana letak kesalahan Anda dan pelajari pembahasannya.</li>`;
+    }
+
+    recommendationsHTML += '</ul>';
+    feedbackEl.innerHTML = recommendationsHTML;
+}
 
 function showReview() {
     buildReviewGrid();
@@ -402,7 +505,7 @@ function loadReviewQuestion(index) {
         banner.innerHTML = `<i class="fas fa-check-circle"></i> Jawaban Anda ${isCorrect ? 'Benar' : 'Salah'}`;
     } else {
         banner.className = 'review-status-banner'; // Neutral
-        banner.innerHTML = `Soal ini tidak dijawab`;
+        banner.innerHTML = `<i class="fas fa-minus-circle"></i> Soal ini tidak dijawab`;
     }
 
     const optionsContainer = document.getElementById('review-options-container');
