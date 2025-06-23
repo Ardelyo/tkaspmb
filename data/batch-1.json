@@ -3,6 +3,7 @@
         "id": 1,
         "main_category": "Literasi",
         "category": "Analisis Tujuan Teks",
+        "difficulty": "mudah",
         "question": "Seorang aktivis lingkungan ingin mengajak masyarakat di sebuah desa untuk segera bertindak nyata mengurangi dampak pemanasan global. Teks mana yang paling efektif untuk ia sampaikan dalam pidatonya dan mengapa?\n\n**Teks A (Eksplanasi):** 'Efek rumah kaca adalah peristiwa meningkatnya suhu bumi karena panas matahari yang dipantulkan bumi terperangkap oleh gas-gas tertentu di atmosfer. Proses ini dimulai saat radiasi ultraviolet diterima bumi dan dipantulkan kembali sebagai inframerah. Gas-gas seperti CO₂ memerangkap radiasi ini, menyebabkan suhu atmosfer meningkat.'\n\n**Teks B (Persuasi):** 'Hadirin sekalian, bumi kita semakin panas. Ini bukan lagi sekadar isu, melainkan kenyataan yang kita rasakan. Oleh karena itu, marilah kita bersama-sama mengurangi jejak karbon kita. Mulailah dari hal kecil, seperti mematikan lampu saat tidak digunakan. Mari kita jaga rumah kita bersama!'",
         "options": [
             "Teks A, karena menyajikan proses ilmiah yang akurat sehingga masyarakat teredukasi dan percaya.",
@@ -17,6 +18,7 @@
         "id": 2,
         "main_category": "Literasi",
         "category": "Analisis Kaidah Kebahasaan",
+        "difficulty": "sedang",
         "question": "Mengacu pada Teks A dan Teks B di soal sebelumnya, perbedaan mendasar dalam penggunaan kaidah kebahasaan yang mencerminkan tujuan masing-masing teks adalah...",
         "options": [
             "Teks A dominan menggunakan konjungsi kausalitas (karena, menyebabkan), sedangkan Teks B dominan menggunakan kata kerja imperatif (marilah, mulailah).",
@@ -31,6 +33,7 @@
         "id": 3,
         "main_category": "Literasi",
         "category": "Evaluasi Teks Ulasan",
+        "difficulty": "mudah",
         "question": "Dalam sebuah Teks Ulasan film 'Ziarah', seorang kritikus menulis: 'Meskipun alur berjalan lambat di awal, kekuatan film ini justru terletak pada kemampuannya membangun perenungan mendalam tentang makna kehilangan dan kesetiaan. Penggunaan bahasa Jawa sebagai pengantar menambah otentisitas yang jarang ditemukan di film arus utama.' Berdasarkan kutipan tersebut, aspek apa yang menjadi keunggulan utama film 'Ziarah' menurut kritikus?",
         "options": [
             "Kecepatan alur cerita yang membuat penonton tidak bosan.",
@@ -45,6 +48,7 @@
         "id": 4,
         "main_category": "Literasi",
         "category": "Aplikasi Struktur Teks",
+        "difficulty": "mudah",
         "question": "Seorang siswa baru saja menyelesaikan percobaan tentang 'Pengaruh Jenis Tanah terhadap Pertumbuhan Tanaman Kacang Hijau'. Untuk melaporkan hasil temuannya secara sistematis dan ilmiah kepada guru, struktur teks yang paling tepat untuk ia gunakan adalah...",
         "options": [
             "Orientasi → Rangkaian Peristiwa → Resolusi",
@@ -59,6 +63,7 @@
         "id": 5,
         "main_category": "Literasi",
         "category": "Analisis Tujuan Komunikatif",
+        "difficulty": "mudah",
         "question": "Perhatikan dua teks berikut:\n\n**Teks 1 (Puisi):** 'Nyiur hijau, di tepi pantai / Siar siur, daunnya melambai / Padi mengembang, kuning merayu / Burung-burung, bernyanyi gembira'\n\n**Teks 2 (LHO):** 'Hutan Mangrove Wana Tirta merupakan kawasan konservasi alam. Di dalamnya terdapat berbagai jenis mangrove yang ditanam di pinggir sungai dan di area berlumpur. Kawasan ini berfungsi sebagai objek studi dan penelitian penanggulangan abrasi.'\n\nMeskipun keduanya dapat menggambarkan keindahan alam, perbedaan mendasar dalam fungsi komunikatif kedua teks tersebut adalah...",
         "options": [
             "Teks 1 bertujuan untuk menjelaskan fungsi ekologis, sedangkan Teks 2 bertujuan untuk mengekspresikan kesedihan.",
@@ -73,6 +78,7 @@
         "id": 6,
         "main_category": "Literasi",
         "category": "Analisis Argumen Teks Diskusi",
+        "difficulty": "mudah",
         "question": "Dalam teks diskusi mengenai 'Dampak Game Online bagi Pelajar', disajikan argumen berikut: 'Di satu sisi, game online dapat meningkatkan kemampuan berpikir strategis dan kerja sama tim. Namun, di sisi lain, Organisasi Kesehatan Dunia (WHO) telah mengklasifikasikan kecanduan game sebagai gangguan mental (gaming disorder) yang dapat merusak prestasi akademik dan kesehatan fisik.' Argumen kontra (menentang) dalam kutipan tersebut diperkuat dengan menggunakan...",
         "options": [
             "Opini pribadi penulis tanpa dasar.",
@@ -87,6 +93,7 @@
         "id": 7,
         "main_category": "Literasi",
         "category": "Sintesis Informasi",
+        "difficulty": "sulit",
         "question": "Jika Kai Imbran dari cerpen 'Kai Imbran dan Sepedanya' yang sangat terikat pada sepedanya karena nilai kenangan, membaca teks 'Mengapa Harus Gengsi?', kemungkinan besar respons yang akan muncul dalam benaknya adalah...",
         "options": [
             "Ia akan semakin membanggakan sepedanya sebagai simbol status sosial yang tinggi.",
@@ -101,6 +108,7 @@
         "id": 8,
         "main_category": "Literasi",
         "category": "Analisis Struktur Teks Berita",
+        "difficulty": "sedang",
         "question": "Struktur piramida terbalik dalam penulisan Teks Berita, di mana informasi terpenting diletakkan di paragraf awal (lead), dirancang untuk tujuan pragmatis, yaitu...",
         "options": [
             "Membuat alur cerita berita menjadi lebih dramatis dan penuh kejutan.",
@@ -115,6 +123,7 @@
         "id": 9,
         "main_category": "Literasi",
         "category": "Identifikasi Unsur Cerita Imajinasi",
+        "difficulty": "mudah",
         "question": "Dalam cerita imajinasi 'Wiz dan Belimbing Ajaib', pohon belimbing memiliki buah dengan lima warna yang masing-masing memiliki khasiat penyembuhan yang berbeda-beda. Unsur cerita ini paling tepat dikategorikan sebagai...",
         "options": [
             "Latar tempat yang menggambarkan lokasi geografis nyata.",
@@ -129,6 +138,7 @@
         "id": 10,
         "main_category": "Literasi",
         "category": "Evaluasi Komunikasi Persuasif",
+        "difficulty": "sedang",
         "question": "Seorang ketua OSIS ingin meyakinkan kepala sekolah dan para guru untuk menyetujui program 'Satu Hari Wajib Berbahasa Daerah' guna melestarikan budaya lokal. Mengacu pada berbagai bentuk komunikasi, cara yang paling formal dan efektif untuk diajukan adalah...",
         "options": [
             "Mengirim surat pribadi yang berisi curahan hati dan harapan.",
@@ -143,6 +153,7 @@
         "id": 11,
         "main_category": "Literasi",
         "category": "Analisis Teks Banding",
+        "difficulty": "sedang",
         "question": "Perbedaan utama antara Teks Laporan Hasil Observasi (LHO) tentang 'Hutan Mangrove' dengan Teks Deskripsi tentang 'Pantai Ora' adalah...",
         "options": [
             "LHO bersifat faktual dan ilmiah berdasarkan klasifikasi, sementara Teks Deskripsi bersifat personal dan bertujuan membangkitkan imaji pembaca.",
@@ -157,6 +168,7 @@
         "id": 12,
         "main_category": "Literasi",
         "category": "Identifikasi Struktur Teks Tanggapan",
+        "difficulty": "sedang",
         "question": "Dalam teks tanggapan kritis tentang 'Ujian Nasional Online', terdapat bagian yang memaparkan sisi positif (seperti efisiensi kertas dan kecepatan penilaian) dan sisi negatif (seperti kendala jaringan listrik dan internet). Struktur teks yang menyajikan berbagai sudut pandang ini disebut...",
         "options": [
             "Evaluasi",
@@ -171,6 +183,7 @@
         "id": 13,
         "main_category": "Literasi",
         "category": "Identifikasi Majas",
+        "difficulty": "mudah",
         "question": "Kalimat 'Bagaikan penari yang gemulai, deretan pohon kelapa melenggok ke kiri dan ke kanan,' yang ditemukan dalam deskripsi 'Pantai Ora' menggunakan majas...",
         "options": [
             "Metafora",
@@ -185,6 +198,7 @@
         "id": 14,
         "main_category": "Literasi",
         "category": "Evaluasi Relevansi Informasi",
+        "difficulty": "mudah",
         "question": "Untuk membuat sebuah Teks Prosedur tentang 'Cara Membuat Perahu dari Batok Kelapa', informasi yang paling tidak relevan untuk disertakan pada bagian 'Langkah-langkah' adalah...",
         "options": [
             "Amplas permukaan batok hingga halus agar aerodinamis.",
@@ -199,6 +213,7 @@
         "id": 15,
         "main_category": "Literasi",
         "category": "Transformasi Teks",
+        "difficulty": "sedang",
         "question": "Jika Anda diminta untuk mengubah sebuah Teks Berita tentang kemenangan tim sepak takraw menjadi sebuah Cerpen, perubahan paling signifikan yang harus Anda lakukan adalah...",
         "options": [
             "Menambahkan lebih banyak data statistik pertandingan seperti jumlah operan dan kecepatan bola.",
@@ -213,6 +228,7 @@
         "id": 16,
         "main_category": "Numerasi",
         "category": "Geometri Ruang (HOTS)",
+        "difficulty": "sedang",
         "question": "Seorang pedagang ingin membuat rak pajangan berbentuk balok untuk menampung kaleng susu berbentuk tabung. Setiap kaleng susu memiliki diameter 7 cm dan tinggi 10 cm. Jika rak pajangan berukuran panjang 70 cm, lebar 35 cm, dan tinggi 30 cm, berapa jumlah maksimal kaleng susu yang dapat ditampung rak tersebut?",
         "options": [
             "150 kaleng",
@@ -227,6 +243,7 @@
         "id": 17,
         "main_category": "Numerasi",
         "category": "Geometri & Aritmetika",
+        "difficulty": "sedang",
         "question": "Sebuah dinding rumah berbentuk gabungan dari persegi panjang dan segitiga sama kaki di atasnya. Panjang sisi persegi panjang adalah 8 meter dan tingginya 3 meter. Jika tinggi total dinding (dari alas sampai puncak segitiga) adalah 7 meter, dan 1 liter cat dapat menutupi area seluas 4 m², berapa liter cat yang dibutuhkan untuk mengecat seluruh dinding tersebut?",
         "options": [
             "10 liter",
@@ -241,6 +258,7 @@
         "id": 18,
         "main_category": "Numerasi",
         "category": "Pola Bilangan",
+        "difficulty": "mudah",
         "question": "Sebuah wahana kincir putar memiliki 20 gondola. Penomoran gondola mengikuti sebuah pola barisan aritmetika. Gondola pertama bernomor 3, kedua 7, ketiga 11, dan seterusnya. Berapa nomor gondola terakhir (ke-20)?",
         "options": [
             "79",
@@ -255,6 +273,7 @@
         "id": 19,
         "main_category": "Numerasi",
         "category": "Fungsi Kuadrat",
+        "difficulty": "sedang",
         "question": "Sebuah usaha penyewaan sepeda memodelkan keuntungan bulanannya dengan fungsi K(x) = -200x² + 8000x - 50000, di mana K adalah keuntungan dalam ribuan rupiah dan x adalah harga sewa per jam dalam puluhan ribu rupiah. Berapa harga sewa per jam yang harus ditetapkan untuk mencapai keuntungan maksimal?",
         "options": [
             "Rp 100.000",
@@ -269,6 +288,7 @@
         "id": 20,
         "main_category": "Numerasi",
         "category": "Transformasi Geometri",
+        "difficulty": "sedang",
         "question": "Posisi sebuah warung pada peta adalah P(2, -3). Karena ada perbaikan jalan, warung tersebut direlokasi dengan pergeseran (translasi) oleh T(-5, 7), kemudian posisinya diputar 90° berlawanan arah jarum jam terhadap titik pusat O(0,0). Koordinat akhir warung tersebut adalah...",
         "options": [
             "(-4, -3)",
@@ -283,6 +303,7 @@
         "id": 21,
         "main_category": "Numerasi",
         "category": "Sistem Persamaan Linear",
+        "difficulty": "sedang",
         "question": "Di sebuah toko buku, harga 2 novel dan 1 buku tulis adalah Rp 140.000. Sedangkan harga 1 novel dan 3 buku tulis yang sama adalah Rp 195.000. Jika seorang siswa membeli 1 novel dengan diskon 20%, berapa yang harus ia bayar?",
         "options": [
             "Rp 35.000",
@@ -290,13 +311,14 @@
             "Rp 45.000",
             "Rp 36.000"
         ],
-        "correctAnswer": "b",
+        "correctAnswer": "d",
         "pembahasan": "Misalkan N = harga novel, B = harga buku. Persamaannya: (1) 2N + B = 140.000 dan (2) N + 3B = 195.000.\nDari (1), B = 140.000 - 2N. Substitusi ke (2): N + 3(140.000 - 2N) = 195.000 -> N + 420.000 - 6N = 195.000 -> -5N = -225.000 -> N = 45.000.\nHarga novel adalah Rp 45.000. Diskon 20% = 0.2 x 45.000 = Rp 9.000.\nHarga yang harus dibayar = Rp 45.000 - Rp 9.000 = Rp 36.000. **Maaf, ada kesalahan pada kunci jawaban awal saya. Jawaban yang benar adalah D.**"
     },
     {
         "id": 22,
         "main_category": "Numerasi",
         "category": "Teorema Pythagoras & Bentuk Akar",
+        "difficulty": "mudah",
         "question": "Seorang petualang berjalan dari titik A ke timur sejauh 6 km, kemudian berjalan ke utara sejauh 8 km ke titik B. Jarak terpendek (garis lurus) dari titik awal A ke titik B adalah...",
         "options": [
             "14 meter",
@@ -311,6 +333,7 @@
         "id": 23,
         "main_category": "Numerasi",
         "category": "Bilangan Berpangkat & Notasi Ilmiah",
+        "difficulty": "sedang",
         "question": "Luas total daratan Indonesia adalah sekitar 1,9 x 10⁶ km². Jika luas Pulau Jawa adalah 1,3 x 10⁵ km², berapa luas daratan Indonesia selain Pulau Jawa, dinyatakan dalam notasi ilmiah?",
         "options": [
             "1,77 x 10⁶ km²",
@@ -325,6 +348,7 @@
         "id": 24,
         "main_category": "Numerasi",
         "category": "Statistika & Persentase",
+        "difficulty": "mudah",
         "question": "Sebuah survei tentang warisan budaya menunjukkan data berikut: 40% siswa menyukai tari tradisional, 25% menyukai musik tradisional, 15% menyukai kuliner tradisional, dan sisanya menyukai kerajinan tangan. Jika total siswa yang disurvei adalah 200 orang, selisih jumlah siswa yang menyukai tari dan kerajinan tangan adalah...",
         "options": [
             "20 orang",
@@ -339,6 +363,7 @@
         "id": 25,
         "main_category": "Numerasi",
         "category": "Fungsi Kuadrat",
+        "difficulty": "sedang",
         "question": "Sebuah roket mainan yang diluncurkan di pasar malam memiliki ketinggian h(t) = 40t - 5t² meter setelah t detik. Waktu yang dibutuhkan roket untuk mencapai ketinggian maksimum adalah...",
         "options": [
             "2 detik",
@@ -353,6 +378,7 @@
         "id": 26,
         "main_category": "Numerasi",
         "category": "FPB (Konteks)",
+        "difficulty": "mudah",
         "question": "Seorang pedagang memiliki 8 tabung gas dan 12 kerucut cetakan tumpeng. Ia akan membuat paket hadiah yang berisi tabung dan kerucut. Setiap paket harus memiliki jumlah tabung yang sama dan jumlah kerucut yang sama. Berapa jumlah paket terbanyak yang bisa ia buat?",
         "options": [
             "2",
@@ -367,6 +393,7 @@
         "id": 27,
         "main_category": "Numerasi",
         "category": "Peluang & Himpunan",
+        "difficulty": "sedang",
         "question": "Dari 40 pembeli di sebuah toko, 25 membeli sabun dan 20 membeli sampo. Jika 10 orang membeli keduanya, peluang seorang pembeli yang dipilih secara acak tidak membeli sabun maupun sampo adalah...",
         "options": [
             "1/8",
@@ -381,6 +408,7 @@
         "id": 28,
         "main_category": "Numerasi",
         "category": "Sistem Pertidaksamaan Linear",
+        "difficulty": "sedang",
         "question": "Sebuah area parkir memiliki luas 200 m² dan hanya dapat menampung maksimal 30 kendaraan. Luas rata-rata untuk parkir mobil adalah 12 m² dan motor 2 m². Jika x adalah jumlah mobil dan y adalah jumlah motor, model pertidaksamaan linear yang sesuai untuk situasi tersebut adalah...",
         "options": [
             "6x + y ≤ 100 dan x + y ≥ 30",
@@ -395,6 +423,7 @@
         "id": 29,
         "main_category": "Numerasi",
         "category": "Lingkaran",
+        "difficulty": "mudah",
         "question": "Keliling sebuah taman berbentuk lingkaran adalah 88 meter. Jika di sekeliling taman akan dipasang tiang lampu dengan jarak antar tiang 4 meter, jumlah tiang yang dibutuhkan adalah... (Gunakan π = 22/7)",
         "options": [
             "14 tiang",
@@ -409,6 +438,7 @@
         "id": 30,
         "main_category": "Numerasi",
         "category": "Statistika (Mean)",
+        "difficulty": "mudah",
         "question": "Rata-rata hasil panen padi dari 5 orang petani adalah 6 ton. Jika data hasil panen 4 orang petani adalah 5, 7, 4, dan 8 ton, maka hasil panen petani kelima adalah...",
         "options": [
             "5 ton",
