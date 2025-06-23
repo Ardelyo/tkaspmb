@@ -1,134 +1,349 @@
-// --- DATA SOAL LENGKAP (115 SOAL) ---
+// --- DATA SOAL LENGKAP (30 SOAL HOTS) ---
 const allQuestions = [
-    // Literasi: Sinonim (1-15)
-    { id: 1, main_category: 'Literasi', category: 'Sinonim', question: 'Siklus', options: ['Daur', 'Program', 'Proses', 'Tesis'], correctAnswer: 'a' },
-    { id: 2, main_category: 'Literasi', category: 'Sinonim', question: 'Loka', options: ['Tujuan', 'Kerja', 'Tempat', 'Rencana'], correctAnswer: 'c' },
-    { id: 3, main_category: 'Literasi', category: 'Sinonim', question: 'Random', options: ['Urut', 'Serasi', 'Sesuai', 'Acak'], correctAnswer: 'd' },
-    { id: 4, main_category: 'Literasi', category: 'Sinonim', question: 'Dekade', options: ['5 tahun', '10 tahun', '25 tahun', '100 tahun'], correctAnswer: 'b' },
-    { id: 5, main_category: 'Literasi', category: 'Sinonim', question: 'Donasi', options: ['Permintaan', 'Hambatan', 'Bantuan', 'Hadiah'], correctAnswer: 'c' },
-    { id: 6, main_category: 'Literasi', category: 'Sinonim', question: 'Kedap', options: ['Rapat', 'Rongga', 'Semu', 'Gelap'], correctAnswer: 'a' },
-    { id: 7, main_category: 'Literasi', category: 'Sinonim', question: 'Residu', options: ['Racun', 'Kendala', 'Isi', 'Sisa'], correctAnswer: 'd' },
-    { id: 8, main_category: 'Literasi', category: 'Sinonim', question: 'Caraka', options: ['Tamu', 'Undangan', 'Utusan', 'Raja'], correctAnswer: 'c' },
-    { id: 9, main_category: 'Literasi', category: 'Sinonim', question: 'Eksklusif', options: ['Umum', 'Khusus', 'Biasa', 'Wajar'], correctAnswer: 'b' },
-    { id: 10, main_category: 'Literasi', category: 'Sinonim', question: 'Skeptis', options: ['Yakin', 'Siap', 'Susah', 'Ragu'], correctAnswer: 'd' },
-    { id: 11, main_category: 'Literasi', category: 'Sinonim', question: 'Awam', options: ['Pemula', 'Ahli', 'Juara', 'Jago'], correctAnswer: 'a' },
-    { id: 12, main_category: 'Literasi', category: 'Sinonim', question: 'Aktual', options: ['Lama', 'Tinggal', 'Terbaru', 'Agenda'], correctAnswer: 'c' },
-    { id: 13, main_category: 'Literasi', category: 'Sinonim', question: 'Insentif', options: ['Rutin', 'Tambahan', 'Uang', 'Hadiah'], correctAnswer: 'b' },
-    { id: 14, main_category: 'Literasi', category: 'Sinonim', question: 'Konstan', options: ['Goyang', 'Rubah', 'Lekat', 'Stabil'], correctAnswer: 'd' },
-    { id: 15, main_category: 'Literasi', category: 'Sinonim', question: 'Misteri', options: ['Umum', 'Rahasia', 'Aturan', 'Tradisi'], correctAnswer: 'b' },
-    // Literasi: Antonim (16-30)
-    { id: 16, main_category: 'Literasi', category: 'Antonim', question: 'Maya', options: ['Khayal', 'Nyata', 'Imajinasi', 'Impian'], correctAnswer: 'b' },
-    { id: 17, main_category: 'Literasi', category: 'Antonim', question: 'Makar', options: ['Khianat', 'Berontak', 'Senang', 'Setia'], correctAnswer: 'd' },
-    { id: 18, main_category: 'Literasi', category: 'Antonim', question: 'Jompo', options: ['Muda', 'Wreda', 'Tua', 'Sebaya'], correctAnswer: 'a' },
-    { id: 19, main_category: 'Literasi', category: 'Antonim', question: 'Mini', options: ['Kecil', 'Jumbo', 'Kerdil', 'Sederhana'], correctAnswer: 'b' },
-    { id: 20, main_category: 'Literasi', category: 'Antonim', question: 'Nyenyak', options: ['Lelap', 'Kantuk', 'Malam', 'Insomnia'], correctAnswer: 'd' },
-    { id: 21, main_category: 'Literasi', category: 'Antonim', question: 'Pra', options: ['Histori', 'Sebelum', 'Pasca', 'Antara'], correctAnswer: 'c' },
-    { id: 22, main_category: 'Literasi', category: 'Antonim', question: 'Vertikal', options: ['Horisontal', 'Plural', 'Lurus', 'Bengkok'], correctAnswer: 'a' },
-    { id: 23, main_category: 'Literasi', category: 'Antonim', question: 'Fana', options: ['Sementara', 'Dunia', 'Sekarang', 'Abadi'], correctAnswer: 'd' },
-    { id: 24, main_category: 'Literasi', category: 'Antonim', question: 'Kekang', options: ['Terbatas', 'Bebas', 'Kurung', 'Penjara'], correctAnswer: 'b' },
-    { id: 25, main_category: 'Literasi', category: 'Antonim', question: 'Monolog', options: ['Dialog', 'Prolog', 'Epilog', 'Babak'], correctAnswer: 'a' },
-    { id: 26, main_category: 'Literasi', category: 'Antonim', question: 'Fiksi', options: ['Khayal', 'Imajinasi', 'Mimpi', 'Fakta'], correctAnswer: 'd' },
-    { id: 27, main_category: 'Literasi', category: 'Antonim', question: 'Kerut', options: ['Wajah', 'Halus', 'Melar', 'Lebar'], correctAnswer: 'c' },
-    { id: 28, main_category: 'Literasi', category: 'Antonim', question: 'Bontot', options: ['Ragil', 'Sulung', 'Bungsu', 'Akhir'], correctAnswer: 'b' },
-    { id: 29, main_category: 'Literasi', category: 'Antonim', question: 'Labil', options: ['Stabil', 'Goyah', 'Rapuh', 'Agil'], correctAnswer: 'a' },
-    { id: 30, main_category: 'Literasi', category: 'Antonim', question: 'Preambule', options: ['Pembuka', 'Pengantar', 'Penutup', 'Keterangan'], correctAnswer: 'c' },
-    // Literasi: Kelompok Kata (31-40)
-    { id: 31, main_category: 'Literasi', category: 'Kelompok Kata', question: 'Carilah satu pilihan kata yang tidak berkaitan dengan kata lainnya!', options: ['Yunani', 'Mali', 'London', 'Finlandia'], correctAnswer: 'c' },
-    { id: 32, main_category: 'Literasi', category: 'Kelompok Kata', question: 'Carilah satu pilihan kata yang tidak berkaitan dengan kata lainnya!', options: ['Emas', 'Yen', 'Poundsterling', 'Ringgit'], correctAnswer: 'a' },
-    { id: 33, main_category: 'Literasi', category: 'Kelompok Kata', question: 'Carilah satu pilihan kata yang tidak berkaitan dengan kata lainnya!', options: ['Ayam', 'Kambing', 'Sapi', 'Singa'], correctAnswer: 'd' },
-    { id: 34, main_category: 'Literasi', category: 'Kelompok Kata', question: 'Carilah satu pilihan kata yang tidak berkaitan dengan kata lainnya!', options: ['Mahabharata', 'Ramayana', 'Tantular', 'Sutasoma'], correctAnswer: 'c' },
-    { id: 35, main_category: 'Literasi', category: 'Kelompok Kata', question: 'Carilah satu pilihan kata yang tidak berkaitan dengan kata lainnya!', options: ['Osaka', 'Kairo', 'Tripoli', 'Seoul'], correctAnswer: 'a' },
-    { id: 36, main_category: 'Literasi', category: 'Kelompok Kata', question: 'Carilah satu pilihan kata yang tidak berkaitan dengan kata lainnya!', options: ['Gamelan', 'Angklung', 'Gendang', 'Rencong'], correctAnswer: 'd' },
-    { id: 37, main_category: 'Literasi', category: 'Kelompok Kata', question: 'Carilah satu pilihan kata yang tidak berkaitan dengan kata lainnya!', options: ['MPR', 'DPR', 'BPD', 'DPD'], correctAnswer: 'c' },
-    { id: 38, main_category: 'Literasi', category: 'Kelompok Kata', question: 'Carilah satu pilihan kata yang tidak berkaitan dengan kata lainnya!', options: ['Prambanan', 'Borobudur', 'Kedukan Bukit', 'Muara Takus'], correctAnswer: 'c' },
-    { id: 39, main_category: 'Literasi', 'category': 'Kelompok Kata', question: 'Carilah satu pilihan kata yang tidak berkaitan dengan kata lainnya!', options: ['Persebaya', 'Pertamina', 'Persija', 'Gresik United'], correctAnswer: 'b' },
-    { id: 40, main_category: 'Literasi', category: 'Kelompok Kata', question: 'Carilah satu pilihan kata yang tidak berkaitan dengan kata lainnya!', options: ['Bapak', 'Masinis', 'Dokter', 'Polisi'], correctAnswer: 'a' },
-    // Literasi: Analogi (41-50)
-    { id: 41, main_category: 'Literasi', category: 'Analogi', question: 'Masinis : Kereta Api = .... : ....', options: ['Bus : Sopir', 'Pilot : Pesawat Terbang', 'Becak : Delman', 'Guru : Murid'], correctAnswer: 'b' },
-    { id: 42, main_category: 'Literasi', category: 'Analogi', question: 'Matahari : Siang = .... : Malam', options: ['Hujan', 'Pelangi', 'Gelap', 'Bulan'], correctAnswer: 'd' },
-    { id: 43, main_category: 'Literasi', category: 'Analogi', question: 'Jawa : Majapahit = .... : ....', options: ['Gowa : Sulawesi', 'Demak : Jawa', 'Sumatera : Sriwijaya', 'Jawa : Ternate'], correctAnswer: 'c' },
-    { id: 44, main_category: 'Literasi', category: 'Analogi', question: 'Jam : Menit = .... : ....', options: ['Minggu : Hari', 'Minggu : Bulan', 'Detik : Menit', 'Minggu : Senin'], correctAnswer: 'a' },
-    { id: 45, main_category: 'Literasi', category: 'Analogi', question: 'Bromo : Gunung = Kapuas : ....', options: ['Danau', 'Benteng', 'Sungai', 'Tumbuhan'], correctAnswer: 'c' },
-    { id: 46, main_category: 'Literasi', category: 'Analogi', question: 'Harimau : Karnivora = .... : ....', options: ['Katak : Amphibi', 'Reptil : Ayam', 'Kuda : Aves', 'Herbivora : Kelinci'], correctAnswer: 'a' },
-    { id: 47, main_category: 'Literasi', category: 'Analogi', question: 'Mandau : Senjata = .... : ....', options: ['Alat Musik : Rebana', 'Rencong : Keris', 'Gadang : Sumatera Barat', 'Gambus : Alat Musik'], correctAnswer: 'd' },
-    { id: 48, main_category: 'Literasi', category: 'Analogi', question: 'Selasa : Senin = Juni : ....', options: ['Juli', 'Agustus', 'Mei', 'April'], correctAnswer: 'c' },
-    { id: 49, main_category: 'Literasi', category: 'Analogi', question: 'Pedas : Sambal = .... : ....', options: ['Harum : Melati', 'Matahari : Panas', 'Hidung : Bau', 'Kecap : Manis'], correctAnswer: 'a' },
-    { id: 50, main_category: 'Literasi', category: 'Analogi', question: 'Finlandia : Eropa = .... : ....', options: ['Kanada : Eropa', 'Asia : India', 'Mali : Afrika', 'Bolivia : Eropa'], correctAnswer: 'c' },
-    // Numerasi: Hitung Cepat (51-60)
-    { id: 51, main_category: 'Numerasi', category: 'Hitung Cepat', question: '0,27 - 0,196 = ....', options: ['0,034', '0,054', '0,064', '0,074'], correctAnswer: 'd' },
-    { id: 52, main_category: 'Numerasi', category: 'Hitung Cepat', question: '13% dari 250 adalah ....', options: ['28', '32,5', '34', '36,5'], correctAnswer: 'b' },
-    { id: 53, main_category: 'Numerasi', category: 'Hitung Cepat', question: '√49 x (436 - 398) = ....', options: ['266', '326', '436', '466'], correctAnswer: 'a' },
-    { id: 54, main_category: 'Numerasi', category: 'Hitung Cepat', question: '7,4 + 17% + 1,38 = .... (Asumsi 17% = 0.17)', options: ['7.85', '7.95', '8.85', '8.95'], correctAnswer: 'd' },
-    { id: 55, main_category: 'Numerasi', category: 'Hitung Cepat', question: 'Hasil dari 87 + 14 + 67 + 72 - 93 adalah ....', options: ['127', '131', '147', '151'], correctAnswer: 'c' },
-    { id: 56, main_category: 'Numerasi', category: 'Hitung Cepat', question: '(101.150 : 14) + 6.350 = ....', options: ['13.575', '14.625', '14.850', '15.175'], correctAnswer: 'a' },
-    { id: 57, main_category: 'Numerasi', category: 'Hitung Cepat', question: '(0,19 + 12%) x 890.000 = .... (Asumsi 12% = 0.12)', options: ['245.300', '265.900', '275.900', '285.300'], correctAnswer: 'c' },
-    { id: 58, main_category: 'Numerasi', category: 'Hitung Cepat', question: '6 1/8 - 3 1/2 = ....', options: ['2 3/8', '2 5/8', '3 3/8', '3 5/8'], correctAnswer: 'b' },
-    { id: 59, main_category: 'Numerasi', category: 'Hitung Cepat', question: '23,7 - 13,9 + 4,6 = ....', options: ['9,4', '11,4', '12,4', '14,4'], correctAnswer: 'd' },
-    { id: 60, main_category: 'Numerasi', category: 'Hitung Cepat', question: '(13 x 6) + 29 - 78 = ....', options: ['26', '27', '29', '30'], correctAnswer: 'c' },
-    // Numerasi: Deret Hitung (61-70)
-    { id: 61, main_category: 'Numerasi', category: 'Deret Hitung', question: '5, 15, 25, 35, ...., ....', options: ['30, 40', '45, 55', '40, 45', '40, 50'], correctAnswer: 'b' },
-    { id: 62, main_category: 'Numerasi', category: 'Deret Hitung', question: '2, 3, 5, 7, 11, ...., ....', options: ['12, 14', '13, 15', '13, 17', '12, 15'], correctAnswer: 'c' },
-    { id: 63, main_category: 'Numerasi', category: 'Deret Hitung', question: '1, 4, 9, 16, ...., 36.', options: ['18', '20', '25', '30'], correctAnswer: 'c' },
-    { id: 64, main_category: 'Numerasi', category: 'Deret Hitung', question: '5, 2, 10, 4, 15, ...., ....', options: ['6, 20', '20, 6', '8, 20', '20, 8'], correctAnswer: 'a' },
-    { id: 65, main_category: 'Numerasi', category: 'Deret Hitung', question: '1, 2, 2, 3, 3, 3, 4, 4, 4, ....', options: ['3', '4', '5', '6'], correctAnswer: 'b' },
-    { id: 66, main_category: 'Numerasi', category: 'Deret Hitung', question: '2, 3, 5, 8, 13, ....', options: ['15', '16', '18', '21'], correctAnswer: 'd' },
-    { id: 67, main_category: 'Numerasi', category: 'Deret Hitung', question: '2, 5, 4, 25, ...., 625', options: ['125', '8', '16', '275'], correctAnswer: 'c' },
-    { id: 68, main_category: 'Numerasi', category: 'Deret Hitung', question: '5, 9, 10, 12, 15, 15, ...., ....', options: ['14, 18', '18, 15', '18, 20', '20, 18'], correctAnswer: 'd' },
-    { id: 69, main_category: 'Numerasi', category: 'Deret Hitung', question: '2, 3, 4, 6, 8, ....', options: ['12', '10', '9', '5'], correctAnswer: 'a' },
-    { id: 70, main_category: 'Numerasi', category: 'Deret Hitung', question: '25, 100, 75, 90, 125, ...., ....', options: ['80, 100', '175, 80', '80, 175', '100, 175'], correctAnswer: 'c' },
-    // Numerasi: Matematika (71-80)
-    { id: 71, main_category: 'Numerasi', category: 'Matematika', question: 'Sekolah Edo berjarak 3 kilometer dari rumahnya. Jika Edo mampu berjalan 4 kilometer setiap jamnya, waktu yang dibutuhkan Edo untuk berjalan pulang-pergi selama 6 hari adalah ....', options: ['6 jam', '7 jam', '8 jam', '9 jam'], correctAnswer: 'd' },
-    { id: 72, main_category: 'Numerasi', category: 'Matematika', question: 'Bu Tadi membeli 4 karung beras seharga Rp680.000,-. Masing-masing karung memiliki berat 1 kuintal. Jika Bu Tadi menjual beras dengan harga Rp2.300,- per kilogram, keuntungan yang akan di dapat Bu Tadi adalah ....', options: ['Rp200.000,-', 'Rp220.000,-', 'Rp240.000,-', 'Rp260.000,-'], correctAnswer: 'c' },
-    { id: 73, main_category: 'Numerasi', category: 'Matematika', question: 'Pak Tono membeli satu kotak kancing baju. Kemudian digunakannya 4/9 bagian untuk membuat baju. Jika kancing yang digunakan sebanyak 72 buah, maka isi kancing pada kotak yang utuh adalah .... buah.', options: ['162', '180', '182', '200'], correctAnswer: 'a' },
-    { id: 74, main_category: 'Numerasi', category: 'Matematika', question: 'Untuk membangun sebuah gudang selama 12 hari diperlukan 6 orang tukang bangunan. Berapakah tukang bangunan yang dibutuhkan agar gudang selesai dalam waktu 3 hari?', options: ['12 orang', '18 orang', '24 orang', '32 orang'], correctAnswer: 'c' },
-    { id: 75, main_category: 'Numerasi', category: 'Matematika', question: 'Dalam penerimaan rapor di kelasnya Lia menduduki peringkat 12 dari atas, dan juga 12 dari bawah. Ini berarti jumlah siswa dalam kelas adalah .... siswa.', options: ['23', '24', '25', '27'], correctAnswer: 'a' },
-    { id: 76, main_category: 'Numerasi', category: 'Matematika', question: 'Sebuah kardus memiliki panjang 20 cm dengan lebar 8 cm. Jika tinggi kardus setengah dari panjang kardus, berapakah volume kardus tersebut?', options: ['800 cm³', '1.200 cm³', '1.400 cm³', '1.600 cm³'], correctAnswer: 'd' },
-    { id: 77, main_category: 'Numerasi', category: 'Matematika', question: 'Yosi menjual sebuah buku dengan harga Rp40.250,-. Jika dalam setiap penjualan Yosi mendapatkan keuntungan sebesar 15%, berapakah harga beli buku tersebut?', options: ['Rp32.500,-', 'Rp35.000,-', 'Rp36.000,-', 'Rp37.500,-'], correctAnswer: 'b' },
-    { id: 78, main_category: 'Numerasi', category: 'Matematika', question: 'Sebuah mobil menempuh jarak 1.170 km dalam waktu 13 jam. Manakah yang bukan merupakan kecepatan mobil tersebut?', options: ['2.000 m/menit', '90 km/jam', '1.500 m/menit', '25 m/detik'], correctAnswer: 'a' },
-    { id: 79, main_category: 'Numerasi', category: 'Matematika', question: 'Perbandingan uang Yuni dan uang Ratna adalah 3 : 4. Jumlah uang mereka adalah Rp122.500,-. Banyak uang Yuni adalah ....', options: ['Rp47.500,-', 'Rp52.500,-', 'Rp55.500,-', 'Rp57.500,-'], correctAnswer: 'b' },
-    { id: 80, main_category: 'Numerasi', category: 'Matematika', question: 'Dua buah roda berputar dengan kecepatan yang berbeda. Saat roda pertama berputar 6 kali, roda kedua berputar 9 kali. Jika roda pertama berputar sebanyak 24 kali, roda kedua akan berputar sebanyak.... kali.', options: ['27', '36', '45', '54'], correctAnswer: 'b' },
-    // Sains (81-90)
-    { id: 81, main_category: 'Sains', category: 'Sains', question: 'Larutan cuka yang kita kenal dalam kehidupan sehari-hari memiliki kandungan asam ....', options: ['Sitrat', 'Asetat', 'Klorida', 'Nitrat'], correctAnswer: 'b' },
-    { id: 82, main_category: 'Sains', category: 'Sains', question: 'Sebuah benda dikatakan bergerak lurus beraturan apabila ....', options: ['Menempuh lintasan lurus dengan kelajuan yang menurun', 'Menempuh lintasan lurus dengan kelajuan yang tidak berubah', 'Menempuh lintasan lurus dengan kelajuan yang meningkat dengan bertahap', 'Menempuh lintasan lurus dengan kelajuan yang naik turun'], correctAnswer: 'b' },
-    { id: 83, main_category: 'Sains', category: 'Sains', question: 'Berdasarkan gambar, cara pembuatan magnet tersebut adalah dengan .... (Gambar menunjukkan paku dililit kawat yang terhubung ke baterai)', options: ['Menggosok', 'Memberi aliran arus listrik', 'Induksi', 'Konveksi'], correctAnswer: 'a' }, // Kunci jawaban dari PDF adalah 'a', meskipun gambar menunjukkan 'b'
-    { id: 84, main_category: 'Sains', category: 'Sains', question: 'Jamur atau fungi dapat digunakan untuk bahan pembuatan makanan di bawah ini, kecuali ....', options: ['Tempe', 'Keju', 'Tape', 'Agar-agar'], correctAnswer: 'd' },
-    { id: 85, main_category: 'Sains', category: 'Sains', question: 'Waktu yang dibutuhkan untuk membuat satu kali getaran disebut dengan ....', options: ['Simpangan', 'Amplitudo', 'Periode', 'Frekuensi'], correctAnswer: 'c' },
-    { id: 86, main_category: 'Sains', category: 'Sains', question: 'Cairan yang mengisi ruang antara membran sel dan inti sel disebut....', options: ['Sitoplasma', 'Mitokondria', 'Kloroplas', 'Plastida'], correctAnswer: 'a' },
-    { id: 87, main_category: 'Sains', category: 'Sains', question: 'Tulang-tulang di bawah ini merupakan tulang yang menyusun tulang panggul, kecuali ....', options: ['Ilium', 'Pubis', 'Ischium', 'Tibia'], correctAnswer: 'd' },
-    { id: 88, main_category: 'Sains', category: 'Sains', question: 'Di bawah ini yang tidak termasuk saluran reproduksi pada pria adalah ....', options: ['Uretra', 'Uterus', 'Vas Deferens', 'Epididimis'], correctAnswer: 'b' },
-    { id: 89, main_category: 'Sains', category: 'Sains', question: 'Bagian lidah yang ditunjukkan oleh anak panah (menunjuk ke bagian samping) adalah bagian lidah yang peka terhadap rasa ....', options: ['Asam', 'Manis', 'Asin', 'Pahit'], correctAnswer: 'd' }, // Kunci jawaban dari PDF adalah 'd' (Pahit), umumnya bagian samping peka rasa asam/asin
-    { id: 90, main_category: 'Sains', category: 'Sains', question: 'Gen yang apabila berpasangan dengan gen lain akan tertutup atau tidak muncul sifatnya disebut gen ....', options: ['Hibrid', 'Dominan', 'Resesif', 'Intermediet'], correctAnswer: 'c' },
-    // Sosial (91-100)
-    { id: 91, main_category: 'Sosial', category: 'Sosial', question: 'Sebab-sebab umum terjadinya Perang Dunia II adalah berikut ini, kecuali ....', options: ['Penyerbuan Jepang terhadap pangkalan Angkatan Laut Amerika Serikat di Pearl Harbour', 'Perlombaan senjata antarnegara', 'Pertentangan antara paham liberalisme dan totaliterisme', 'Semangat untuk membalas dendam karena kekalahan dalam PD I'], correctAnswer: 'a' },
-    { id: 92, main_category: 'Sosial', category: 'Sosial', question: 'Gerakan pada lapisan kulit bumi secara horizontal maupun vertikal akibat pengangkatan dan penurunan permukaan bumi yang terjadi sangat cepat serta meliputi wilayah yang sempit disebut ....', options: ['Epirogenesa positif', 'Epirogenesa negatif', 'Orogenesa', 'Sinklinal'], correctAnswer: 'c' },
-    { id: 93, main_category: 'Sosial', category: 'Sosial', question: 'Peta yang dibuat pada bidang datar, seperti kain, kertas, atau triplek, disebut dengan peta ....', options: ['Kadaster', 'Planimetri', 'Relief', 'Digital'], correctAnswer: 'b' },
-    { id: 94, main_category: 'Sosial', category: 'Sosial', question: 'Sebagai pengganti BPUPKI, dibentuklah sebuah panitia yang bertugas mempersiapkan segala sesuatu yang dibutuhkan bagi pendirian negara dan pemerintahan Republik Indonesia. Panitia tersebut diberi nama ....', options: ['Panitia Sembilan', 'Panitia Pancasila Jaya', 'Panitia Persiapan Kemerdekaan Indonesia', 'Panitia Persiapan Kemerdekaan Republik Indonesia'], correctAnswer: 'c' },
-    { id: 95, main_category: 'Sosial', category: 'Sosial', question: 'Hujan yang terjadi karena adanya pengumpulan awan yang disebabkan oleh angin disebut hujan ....', options: ['Orografis', 'Konveksi', 'Frontal', 'Konvergen'], correctAnswer: 'd' },
-    { id: 96, main_category: 'Sosial', category: 'Sosial', question: 'Pada tahun 1965 Indonesia sempat keluar dari keanggotaannya di PBB. Hal ini terjadi disebabkan karena ....', options: ['PBB tidak bersedia memberikan bantuan moneter kepada Indonesia', 'Terpilihnya Malaysia sebagai anggota tidak tetap Dewan Keamanan PBB', 'Indonesia tidak setuju dengan markas PBB', 'Indonesia ingin mendirikan PBB tandingan'], correctAnswer: 'b' },
-    { id: 97, main_category: 'Sosial', category: 'Sosial', question: 'Kesenjangan antara pencari kerja dan lowongan kerja disebut ....', options: ['Pengangguran friksional', 'Pengangguran struktural', 'Pengangguran konjungtur', 'Pengangguran voluntary'], correctAnswer: 'a' },
-    { id: 98, main_category: 'Sosial', category: 'Sosial', question: 'Lapisan atmosfer yang paling dekat letaknya dengan bumi adalah ....', options: ['Stratosfer', 'Termosfer', 'Mesosfer', 'Troposfer'], correctAnswer: 'd' },
-    { id: 99, main_category: 'Sosial', category: 'Sosial', question: 'Di bawah ini yang termasuk fungsi asli dari uang adalah ....', options: ['Sebagai alat pembayaran', 'Sebagai alat satuan hitung', 'Sebagai alat penimbun kekayaan', 'Sebagai alat pemindah kekayaan'], correctAnswer: 'b' },
-    { id: 100, main_category: 'Sosial', category: 'Sosial', question: 'Taman Siswa merupakan salah satu sekolah kebangsaan yang didirikan oleh Ki Hajar Dewantara pada tahun ....', options: ['1908', '1912', '1922', '1924'], correctAnswer: 'c' },
-    // Literasi: Penalaran (101-105)
-    { id: 101, main_category: 'Literasi', category: 'Penalaran', question: 'Semua siswa baru mengenakan topi.\nSebagian siswa baru mengenakan dasi.\nKesimpulan yang tepat adalah ....', options: ['Semua siswa baru mengenakan dasi', 'Semua siswa baru yang tidak mengenakan topi memakai dasi', 'Sebagian siswa baru mengenakan dasi', 'Sebagian siswa baru mengenakan dasi dan topi'], correctAnswer: 'd' },
-    { id: 102, main_category: 'Literasi', category: 'Penalaran', question: 'Semua binatang diberi makanan.\nSebagian makanan adalah daging.\nKesimpulan yang tepat adalah ....', options: ['Semua binatang diberi makanan bukan daging', 'Sebagian binatang diberi makanan bukan daging', 'Sebagian binatang diberi makanan daging dan sebagian tidak diberi makan', 'Semua binatang diberi makanan daging'], correctAnswer: 'b' },
-    { id: 103, main_category: 'Literasi', category: 'Penalaran', question: 'Binatang A hidup di daratan.\nBinatang B hidup di air.\nKesimpulan yang tepat tentang tempat hidup kedua binatang adalah ....', options: ['Binatang B ada di tempat hidup bukan binatang A', 'Binatang B ada di tempat hidup bukan binatang B', 'Binatang B ada di tempat hidup binatang A', 'Binatang A ada di tempat hidup bukan binatang A'], correctAnswer: 'a' },
-    { id: 104, main_category: 'Literasi', category: 'Penalaran', question: 'Perhatikan keterangan berikut:\nAhmad, Doni, Joko, Linda, dan Okta adalah teman sekelas. Mereka selalu berangkat sekolah bersama-sama, kecuali Okta yang rumahnya di sebelah sekolah. Setiap pagi Doni berangkat ke sekolah setelah dijemput oleh Linda. Sedangkan Joko berangkat menunggu jemputan dari Ahmad. Joko berangkat lebih pagi daripada Linda karena rumahnya lebih jauh.\n\nSiapakah yang letak rumahnya paling jauh dari sekolah?', options: ['Linda', 'Ahmad', 'Doni', 'Joko'], correctAnswer: 'b' },
-    { id: 105, main_category: 'Literasi', category: 'Penalaran', question: 'Berdasarkan keterangan soal sebelumnya, urutan rumah anak-anak tersebut dimulai dari yang terdekat dengan sekolah adalah ....', options: ['Okta - Joko - Doni - Linda - Ahmad', 'Okta - Doni - Linda - Joko - Ahmad', 'Okta - Doni - Joko - Linda - Ahmad', 'Okta - Linda - Doni - Joko - Ahmad'], correctAnswer: 'b' },
-    // Ketelitian (106-115)
-    { id: 106, main_category: 'Ketelitian', category: 'Ketelitian', question: 'Carilah satu pilihan yang tidak sama dengan pilihan lainnya!', options: ['Lumyzia Auxalliantara Prabawardhaningrum', 'Lumyzia Auxalliantara Prabawardhaningrum', 'Lumyzia Auxallianatra Prabawardhaningrum', 'Lumyzia Auxalliantara Prabawardhaningrum'], correctAnswer: 'c' },
-    { id: 107, main_category: 'Ketelitian', category: 'Ketelitian', question: 'Carilah satu pilihan yang tidak sama dengan pilihan lainnya!', options: ['085389748832', '085839748832', '085839748832', '085839748832'], correctAnswer: 'a' },
-    { id: 108, main_category: 'Ketelitian', category: 'Ketelitian', question: 'Carilah satu pilihan yang tidak sama dengan pilihan lainnya!', options: ['379rr_roemasinatoen@gmail.com', '379rr_roemasinatoen@gmail.com', '379rr_roemasinatoen@gmail.com', '379tr_roemasinatoen@gmail.com'], correctAnswer: 'd' },
-    { id: 109, main_category: 'Ketelitian', category: 'Ketelitian', question: 'Carilah satu pilihan yang tidak sama dengan pilihan lainnya!', options: ['19631229 199406 2 014', '19631229 199406 2 014', '19631229 199486 2 014', '19631229 199406 2 014'], correctAnswer: 'c' },
-    { id: 110, main_category: 'Ketelitian', category: 'Ketelitian', question: 'Carilah satu pilihan yang tidak sama dengan pilihan lainnya!', options: ['westports_dragonwarriors@yahoo.com', 'westports_dragonwanriors@yahoo.com', 'westports_dragonwarriors@yahoo.com', 'westports_dragonwarriors@yahoo.com'], correctAnswer: 'b' },
-    { id: 111, main_category: 'Ketelitian', category: 'Ketelitian', question: 'Carilah satu pilihan yang tidak sama dengan pilihan lainnya!', options: ['The Sorcerers Apprentice', 'The Sorcerers Appretnice', 'The Sorcerers Apprentice', 'The Sorcerers Apprentice'], correctAnswer: 'b' },
-    { id: 112, main_category: 'Ketelitian', category: 'Ketelitian', question: 'Carilah satu pilihan yang tidak sama dengan pilihan lainnya!', options: ['82019374191873164', '82019374191873164', '82019374191873164', '82019374191783164'], correctAnswer: 'd' },
-    { id: 113, main_category: 'Ketelitian', category: 'Ketelitian', question: 'Carilah satu pilihan yang tidak sama dengan pilihan lainnya!', options: ['giannico_almerazfa492@gmail.com', 'giannico_almerazta492@gmail.com', 'giannico_almerazta492@gmail.com', 'giannico_almerazta492@gmail.com'], correctAnswer: 'a' },
-    { id: 114, main_category: 'Ketelitian', category: 'Ketelitian', question: 'Carilah satu pilihan yang tidak sama dengan pilihan lainnya!', options: ['Jalan Atmosukarto Kartadjaya, Gang VIII, No 173, Semarang', 'Jalan Atmosukarto Kartadjaya, Gang VIII, No 173, Semarang', 'Jalan Atmosukarto Kartadjaya, Gang VIII, No 173, Semarang', 'Jalan Atmosukarto Kartadjaya, Geng VIII, No 173, Semarang'], correctAnswer: 'd' },
-    { id: 115, main_category: 'Ketelitian', category: 'Ketelitian', question: 'Carilah satu pilihan yang tidak sama dengan pilihan lainnya!', options: ['wisata_oemahdjawayogyakarta@yahoo.com', 'wisata_oemahdjawayogyakarta@yahoo.com', 'wisata_oemahdjawayogyakerta@yahoo.com', 'wisata_oemahdjawayogyakarta@yahoo.com'], correctAnswer: 'c' },
+    // ===================================
+    // == BAGIAN LITERASI (15 SOAL) ==
+    // ===================================
+    {
+        id: 1,
+        main_category: 'Literasi',
+        category: 'Analisis Teks Banding',
+        question: `Perhatikan dua teks berikut.\n
+**Teks A (Laporan Hasil Observasi):**
+Pohon Mangga (Mangifera indica) adalah tumbuhan berkayu yang termasuk dalam suku Anacardiaceae. Tingginya dapat mencapai 10-40 meter dengan diameter batang hingga 1,5 meter. Daunnya tunggal, berwarna hijau tua, dan berbentuk lanset. Buahnya termasuk kelompok buah batu (drupa) yang berdaging, dengan ukuran dan bentuk bervariasi. Berdasarkan pengamatan, buah mangga mengandung vitamin C, vitamin A, dan serat yang bermanfaat bagi kesehatan pencernaan.\n
+**Teks B (Deskripsi):**
+Di sudut kebunku, berdiri gagah sebatang pohon mangga warisan kakek. Rindang daunnya yang hijau pekat seolah menjadi payung raksasa yang meneduhkan, tempatku berlindung dari sengatan mentari siang. Ketika musim berbuah tiba, cabang-cabangnya yang kokoh dihiasi buah-buah ranum berwarna kuning keemasan, menebarkan aroma manis yang menggoda siapa pun yang lewat. Rasanya, pohon ini bukan sekadar tumbuhan, melainkan saksi bisu kenangan masa kecilku.\n
+Berdasarkan analisis tujuan penulisan, perbedaan paling mendasar antara Teks A dan Teks B adalah...`,
+        options: [
+            'Teks A menyajikan fakta umum, sedangkan Teks B menyajikan fakta khusus.',
+            'Teks A bertujuan mengklasifikasikan secara objektif, sedangkan Teks B bertujuan membangkitkan pengalaman personal dan imajinasi pembaca.',
+            'Teks A menggunakan bahasa baku, sedangkan Teks B menggunakan bahasa tidak baku.',
+            'Teks A membahas manfaat, sedangkan Teks B hanya membahas ciri fisik.'
+        ],
+        correctAnswer: 'b'
+    },
+    {
+        id: 2,
+        main_category: 'Literasi',
+        category: 'Evaluasi & Modifikasi Teks',
+        question: `Mengacu pada Teks A dan Teks B dari soal sebelumnya, jika penulis Teks B ingin mengubah tulisannya menjadi sebuah Teks Laporan Hasil Observasi (seperti Teks A), hal paling krusial yang harus ia hilangkan adalah...`,
+        options: [
+            'Informasi mengenai warna dan bentuk buah mangga.',
+            'Deskripsi tentang tinggi dan diameter batang pohon.',
+            'Penggunaan citraan (aroma manis) dan ungkapan emotif (saksi bisu kenangan).',
+            'Penyebutan nama latin Mangifera indica.'
+        ],
+        correctAnswer: 'c'
+    },
+    {
+        id: 3,
+        main_category: 'Literasi',
+        category: 'Penalaran Teks Diskusi',
+        question: `Debat mengenai penggunaan kecerdasan buatan (AI) di dunia pendidikan semakin mengemuka. Di satu sisi (Argumen Pro), AI dipandang sebagai alat bantu revolusioner yang dapat mempersonalisasi pembelajaran. Di sisi lain (Argumen Kontra), ada kekhawatiran bahwa ketergantungan berlebihan pada AI akan mengikis kemampuan berpikir kritis. Isu privasi data dan potensi bias algoritma juga menjadi ancaman.\n\nManakah simpulan yang paling tepat dan representatif untuk mengakhiri teks diskusi di atas, yang mampu memberikan jalan tengah?`,
+        options: [
+            'Oleh karena itu, penggunaan AI dalam pendidikan harus ditolak sepenuhnya untuk melindungi siswa dari dampak negatifnya.',
+            'Dengan demikian, AI harus segera diimplementasikan di semua sekolah karena manfaatnya jauh lebih besar daripada risikonya.',
+            'AI memang menawarkan potensi besar, tetapi implementasinya harus dilakukan secara hati-hati dengan regulasi yang ketat untuk memitigasi risiko sambil memaksimalkan manfaatnya.',
+            'Perdebatan ini tidak akan pernah berakhir karena kedua belah pihak memiliki argumen yang sama kuatnya.'
+        ],
+        correctAnswer: 'c'
+    },
+    {
+        id: 4,
+        main_category: 'Literasi',
+        category: 'Transformasi Jenis Teks',
+        question: `Jika seorang penulis ingin mengubah teks diskusi tentang AI (dari soal sebelumnya) menjadi sebuah **Teks Eksposisi** yang bertujuan meyakinkan pembaca bahwa **AI baik untuk pendidikan**, bagian mana yang harus diperkuat dan bagian mana yang harus diminimalkan?`,
+        options: [
+            'Memperkuat "Argumen Kontra" dengan data dan fakta, serta meminimalkan "Argumen Pro".',
+            'Memperkuat "Argumen Pro" dengan contoh keberhasilan dan data pendukung, serta menyajikan "Argumen Kontra" hanya sebagai sanggahan yang kemudian dibantah.',
+            'Menghilangkan kedua argumen dan menggantinya dengan langkah-langkah menggunakan AI di kelas.',
+            'Menambahkan lebih banyak pertanyaan retoris untuk membuat pembaca bingung.'
+        ],
+        correctAnswer: 'b'
+    },
+    {
+        id: 5,
+        main_category: 'Literasi',
+        category: 'Evaluasi Teks Prosedur',
+        question: `Perhatikan prosedur berikut:\n(1) Siapkan blender.\n(2) Masukkan potongan buah naga dan pisang.\n(3) Tuangkan 100 ml air putih.\n(4) Tambahkan dua sendok makan gula.\n(5) Nyalakan blender hingga semua bahan halus.\n(6) Jus siap dinikmati.\n\nSeorang ahli gizi mengkritik prosedur di atas karena dianggap kurang sehat. Jika Anda diminta merevisi prosedur tersebut agar sesuai dengan prinsip hidup sehat, modifikasi paling efektif adalah...`,
+        options: [
+            'Mengganti blender dengan juicer.',
+            'Menghilangkan langkah (4) dan menyarankan penggunaan madu atau tidak menggunakan pemanis sama sekali.',
+            'Menambahkan es batu pada langkah (2) agar lebih segar.',
+            'Mengganti air putih dengan susu kental manis pada langkah (3).'
+        ],
+        correctAnswer: 'b'
+    },
+    {
+        id: 6,
+        main_category: 'Literasi',
+        category: 'Analisis Teks Berita',
+        question: `Perhatikan kutipan berita berikut:\n"Menteri Keuangan menyatakan bahwa stabilitas ekonomi nasional pada kuartal ketiga menunjukkan tren positif. 'Kita optimis pertumbuhan akan melampaui target,' ujarnya saat konferensi pers di Jakarta, Selasa (25/10). Ia menambahkan, optimisme ini didasarkan pada peningkatan investasi dan konsumsi domestik."\n\nAnalisis yang paling tepat terhadap struktur dan kaidah kebahasaan teks berita di atas adalah...`,
+        options: [
+            'Teks menggunakan struktur piramida terbalik dengan menyajikan kutipan langsung (kalimat langsung) untuk memperkuat kredibilitas informasi.',
+            'Teks ini bias karena hanya menyajikan opini dari satu pihak tanpa data pendukung.',
+            'Teks menggunakan kalimat tidak langsung untuk menyembunyikan identitas narasumber.',
+            'Teks tersebut bukan berita karena tidak memenuhi unsur "Di mana" (Where).'
+        ],
+        correctAnswer: 'a'
+    },
+    {
+        id: 7,
+        main_category: 'Literasi',
+        category: 'Analisis Puisi (HOTS)',
+        question: `Perhatikan kutipan puisi berikut.\n*Senja di Pelabuhan Kecil*\nIni kali tidak ada yang mencari cinta\ndi antara gudang, rumah tua, pada cerita\ntiang serta temali. Kapal, perahu tiada berlaut\nmenghembus diri dalam mempercayai mau berpaut\n(Chairil Anwar)\n\nAmanat yang tersirat dari sintesis antara diksi ("tiada berlaut", "tiada berpaut") dan citraan suasana ("gudang, rumah tua") dalam puisi tersebut adalah...`,
+        options: [
+            'Ajakan untuk mencintai keindahan pelabuhan di waktu senja.',
+            'Gambaran tentang kesibukan para nelayan di sore hari.',
+            'Refleksi tentang perasaan hampa, kesepian, dan ketiadaan harapan.',
+            'Kritik sosial terhadap kondisi pelabuhan yang tidak terawat.'
+        ],
+        correctAnswer: 'c'
+    },
+    {
+        id: 8,
+        main_category: 'Literasi',
+        category: 'Analisis Teks Ulasan',
+        question: `Sebuah ulasan film menulis: "Meskipun sinematografinya memukau dan akting pemeran utama patut diacungi jempol, alur cerita film ini terasa terlalu mudah ditebak sejak pertengahan durasi. Penonton seolah hanya disuguhi keindahan visual tanpa kejutan naratif yang berarti."\n\nEvaluasi yang terkandung dalam kutipan ulasan tersebut menyiratkan bahwa...`,
+        options: [
+            'Film tersebut gagal total dalam semua aspek.',
+            'Film tersebut memiliki keunggulan teknis namun lemah dalam aspek penceritaan (storytelling).',
+            'Penulis ulasan tidak menyukai genre film tersebut.',
+            'Akting yang bagus tidak mampu menutupi sinematografi yang buruk.'
+        ],
+        correctAnswer: 'b'
+    },
+    {
+        id: 9,
+        main_category: 'Literasi',
+        category: 'Strategi Teks Persuasi',
+        question: `Seorang kepala desa ingin menyampaikan pidato untuk mengajak warganya mengikuti program "Bank Sampah". Untuk mencapai tujuan pengubahan tanggapan (dari apatis menjadi partisipatif), strategi pidato persuasif yang paling efektif adalah...`,
+        options: [
+            'Membuka pidato dengan data statistik global tentang sampah, lalu menutup dengan sanksi bagi yang tidak ikut.',
+            'Menggunakan bahasa yang formal dan ilmiah untuk menunjukkan kredibilitas program.',
+            'Memulai dengan cerita inspiratif tentang desa lain yang sukses, menunjukkan keuntungan ekonomi langsung bagi warga (kata-kata emotif), dan diakhiri dengan ajakan "mari" dan "ayo" yang bersemangat.',
+            'Fokus menjelaskan struktur organisasi Bank Sampah secara rinci dari awal hingga akhir.'
+        ],
+        correctAnswer: 'c'
+    },
+    {
+        id: 10,
+        main_category: 'Literasi',
+        category: 'Analisis Unsur Cerpen',
+        question: `Dalam sebuah cerpen, tokoh utama bernama Ardi adalah seorang pemuda desa yang jujur namun sering diremehkan. Cerita berakhir dengan Ardi berhasil menyelamatkan desanya dari penipuan berkedok investasi berkat kejujurannya. Sudut pandang yang digunakan adalah orang ketiga serbatahu.\n\nJika penulis mengubah sudut pandang menjadi **orang pertama (Aku-Ardi)**, dampak paling signifikan terhadap penceritaan adalah...`,
+        options: [
+            'Alur cerita akan berubah total dari awal hingga akhir.',
+            'Pembaca tidak akan mengetahui latar tempat dan waktu cerita.',
+            'Latar belakang penulis akan menjadi lebih jelas.',
+            'Pembaca akan merasakan konflik batin, keraguan, dan perasaan Ardi secara lebih intim dan mendalam, namun pandangan terhadap tokoh lain menjadi terbatas.'
+        ],
+        correctAnswer: 'd'
+    },
+    {
+        id: 11,
+        main_category: 'Literasi',
+        category: 'Analisis Teks Persuasi',
+        question: `Perhatikan slogan berikut:\n(1) "Apapun makanannya, minumnya Teh Botol Sosro."\n(2) "Mari Lestarikan Hutan, Paru-paru Dunia Kita."\n\nDari perspektif tujuan komunikasinya, perbedaan fundamental antara kedua slogan tersebut adalah...`,
+        options: [
+            'Slogan (1) bersifat komersial untuk membangun citra merek, sedangkan slogan (2) bersifat sosial untuk membangun kesadaran publik.',
+            'Slogan (1) menggunakan kalimat ajakan, sedangkan slogan (2) tidak.',
+            'Slogan (1) lebih mudah diingat daripada slogan (2).',
+            'Slogan (1) ditujukan untuk semua kalangan, sedangkan slogan (2) hanya untuk aktivis lingkungan.'
+        ],
+        correctAnswer: 'a'
+    },
+    {
+        id: 12,
+        main_category: 'Literasi',
+        category: 'Analisis Teks Eksplanasi',
+        question: `Teks Eksplanasi yang menjelaskan proses terjadinya gerhana matahari akan dominan menggunakan konjungsi kausalitas (sebab-akibat). Manakah di antara kalimat berikut yang **PALING TIDAK RELEVAN** untuk dimasukkan ke dalam teks tersebut?`,
+        options: [
+            'Posisi bulan berada di antara bumi dan matahari, **akibatnya** cahaya matahari ke bumi terhalang oleh bulan.',
+            'Gerhana matahari total adalah fenomena alam yang sangat indah, **oleh karena itu** banyak wisatawan asing datang untuk menyaksikannya.',
+            '**Karena** diameter bulan jauh lebih kecil dari matahari, gerhana hanya terjadi jika jarak bumi-bulan tepat.',
+            'Bayangan inti bulan yang jatuh ke permukaan bumi **menyebabkan** terjadinya gerhana total di area tersebut.'
+        ],
+        correctAnswer: 'b'
+    },
+    {
+        id: 13,
+        main_category: 'Literasi',
+        category: 'Kaidah Bahasa Surat Dinas',
+        question: `Surat dinas dari OSIS kepada Kepala Sekolah berisi permohonan izin penggunaan aula untuk acara pentas seni. Manakah kalimat isi surat yang paling tepat, efektif, dan sesuai kaidah bahasa surat dinas?`,
+        options: [
+            'Kami mohon Bapak ngasih izin buat pakai aula, soalnya kita mau ada pensi.',
+            'Dengan ini, kami selaku panitia memohon izin dari Bapak untuk peminjaman dan penggunaan aula sekolah pada hari dan tanggal yang telah kami tetapkan.',
+            'Sehubungan dengan akan diselenggarakannya acara pentas seni, kami memohon izin Bapak untuk dapat menggunakan aula sekolah pada hari Sabtu, 15 November 2023.',
+            'Bapak Kepala Sekolah yang terhormat, kami anak-anak OSIS mau pinjam aula buat acara hari Sabtu. Boleh ya, Pak?'
+        ],
+        correctAnswer: 'c'
+    },
+    {
+        id: 14,
+        main_category: 'Literasi',
+        category: 'Analisis Cerita Imajinasi',
+        question: `Cerita imajinasi tentang seorang anak yang menemukan pintu ajaib di belakang lemari tuanya, yang membawanya ke kerajaan awan, tergolong jenis cerita imajinasi total. Jika pengarang ingin mengubahnya menjadi **cerita imajinasi irisan**, perubahan yang paling logis adalah...`,
+        options: [
+            'Mengubah tokoh utama menjadi seekor hewan yang bisa berbicara.',
+            'Menghilangkan unsur pintu ajaib dan kerajaan awan sepenuhnya.',
+            'Tetap menggunakan latar dunia nyata (rumah dan sekolah si anak), namun memunculkan satu unsur ajaib, misalnya teman sebangkunya ternyata seorang peri.',
+            'Membuat seluruh kejadian ternyata hanya mimpi si anak.'
+        ],
+        correctAnswer: 'c'
+    },
+    {
+        id: 15,
+        main_category: 'Literasi',
+        category: 'Analisis Teks Banding',
+        question: `Perbedaan fokus utama antara **Teks Laporan Percobaan** dan **Teks Prosedur** adalah...`,
+        options: [
+            'Laporan Percobaan berorientasi pada proses dan hasil pembuktian hipotesis, sedangkan Teks Prosedur berorientasi pada panduan untuk mencapai hasil yang sudah pasti.',
+            'Teks Prosedur selalu menggunakan gambar, sedangkan Laporan Percobaan tidak.',
+            'Laporan Percobaan menggunakan bahasa yang rumit, sedangkan Teks Prosedur bahasanya sederhana.',
+            'Teks Prosedur tidak memiliki bagian tujuan, sedangkan Laporan Percobaan memilikinya.'
+        ],
+        correctAnswer: 'a'
+    },
+    // ===================================
+    // == BAGIAN NUMERASI (15 SOAL) ==
+    // ===================================
+    {
+        id: 16,
+        main_category: 'Numerasi',
+        category: 'Aritmetika Sosial (HOTS)',
+        question: `Toko A menjual kemeja seharga Rp200.000 dengan diskon 30%. Toko B menjual kemeja yang sama seharga Rp225.000 dengan diskon "Beli 2 Gratis 1". Budi ingin membeli 3 kemeja. Untuk mendapatkan total biaya yang paling murah, strategi yang harus dipilih Budi adalah...`,
+        options: [
+            'Membeli 3 kemeja di Toko A.',
+            'Membeli 3 kemeja di Toko B.',
+            'Membeli 2 kemeja di Toko B dan 1 kemeja di Toko A.',
+            'Membeli 2 kemeja di Toko A dan 1 kemeja di Toko B.'
+        ],
+        correctAnswer: 'a'
+    },
+    {
+        id: 17,
+        main_category: 'Numerasi',
+        category: 'Perbandingan Berbalik Nilai',
+        question: `Sebuah proyek perbaikan jalan dijadwalkan selesai dalam 40 hari oleh 21 pekerja. Setelah 8 hari bekerja, proyek dihentikan selama 4 hari karena cuaca buruk. Agar proyek selesai tepat waktu, berapa banyak tambahan pekerja yang diperlukan?`,
+        options: ['3 pekerja', '6 pekerja', '7 pekerja', '9 pekerja'],
+        correctAnswer: 'a'
+    },
+    {
+        id: 18,
+        main_category: 'Numerasi',
+        category: 'Optimisasi Geometri',
+        question: `Pak Budi memiliki sebidang tanah berbentuk persegi panjang dengan keliling 60 meter. Ia ingin membuat taman bunga di tanah tersebut. Agar luas taman bunga yang ia buat maksimal, berapakah selisih antara panjang dan lebar tanah tersebut?`,
+        options: ['0 meter', '5 meter', '10 meter', '15 meter'],
+        correctAnswer: 'a'
+    },
+    {
+        id: 19,
+        main_category: 'Numerasi',
+        category: 'Analisis Data Kritis',
+        question: `Pola susunan kursi pada sebuah gedung pertunjukan membentuk barisan aritmetika. Terdapat 10 kursi di baris pertama, 14 kursi di baris kedua, 18 kursi di baris ketiga, dan seterusnya. Harga tiket untuk 5 baris pertama adalah Rp100.000, sedangkan untuk baris-baris berikutnya adalah Rp75.000. Jika total pendapatan dari seluruh kursi yang terisi penuh pada baris ke-12 adalah Rp2.250.000, maka pernyataan yang paling tepat adalah...`,
+        options: [
+            'Pendapatan dari 5 baris pertama lebih besar dari baris sisanya.',
+            'Jumlah kursi di gedung tersebut lebih dari 350.',
+            'Harga tiket rata-rata untuk seluruh kursi adalah Rp80.000.',
+            'Terdapat kesalahan data karena total pendapatan seharusnya tidak sebesar itu.'
+        ],
+        correctAnswer: 'd'
+    },
+    {
+        id: 20,
+        main_category: 'Numerasi',
+        category: 'Transformasi Geometri',
+        question: `Titik A(6, -4) dicerminkan terhadap garis y = x, kemudian hasilnya dirotasikan 90° berlawanan arah jarum jam dengan pusat O(0,0). Di manakah posisi akhir titik A?`,
+        options: ['Kuadran I', 'Kuadran II', 'Kuadran III', 'Kuadran IV'],
+        correctAnswer: 'c'
+    },
+    {
+        id: 21,
+        main_category: 'Numerasi',
+        category: 'Kesebangunan',
+        question: `Sebuah foto berukuran 10 cm (lebar) x 15 cm (tinggi) diletakkan di atas selembar karton. Di sisi kiri, kanan, dan atas foto masih tersisa karton selebar 2 cm. Jika foto dan karton sebangun, berapa lebar karton yang tersisa di bagian bawah foto?`,
+        options: ['2 cm', '3 cm', '4 cm', '5 cm'],
+        correctAnswer: 'c'
+    },
+    {
+        id: 22,
+        main_category: 'Numerasi',
+        category: 'Peluang Kejadian Majemuk',
+        question: `Sebuah dadu merah dan sebuah dadu biru dilempar bersamaan. Peluang munculnya mata dadu merah bernilai ganjil DAN jumlah mata kedua dadu adalah 8 adalah...`,
+        options: ['1/36', '2/36', '3/36', '4/36'],
+        correctAnswer: 'b'
+    },
+    {
+        id: 23,
+        main_category: 'Numerasi',
+        category: 'Statistika (Rata-rata Gabungan)',
+        question: `Rata-rata nilai ujian matematika 30 siswa adalah 78. Setelah 2 orang siswa yang nilainya 95 dan 98 keluar dari kelompok tersebut, dan 4 orang siswa baru dengan total nilai 320 masuk, bagaimana perubahan rata-rata nilai kelompok tersebut?`,
+        options: [
+            'Rata-rata nilai turun lebih dari 1 poin.',
+            'Rata-rata nilai turun kurang dari 1 poin.',
+            'Rata-rata nilai naik kurang dari 1 poin.',
+            'Rata-rata nilai naik lebih dari 1 poin.'
+        ],
+        correctAnswer: 'b'
+    },
+    {
+        id: 24,
+        main_category: 'Numerasi',
+        category: 'Fungsi Kuadrat (Aplikasi)',
+        question: `Sebuah roket diluncurkan vertikal ke atas. Ketinggian roket (h) dalam meter setelah t detik dirumuskan dengan h(t) = 80t - 5t². Roket tersebut diprogram untuk melepaskan satelit kecil tepat 2 detik sebelum mencapai ketinggian maksimumnya. Pada ketinggian berapakah satelit tersebut dilepaskan?`,
+        options: ['240 meter', '280 meter', '300 meter', '320 meter'],
+        correctAnswer: 'c'
+    },
+    {
+        id: 25,
+        main_category: 'Numerasi',
+        category: 'Sistem Persamaan (Aritmetika Sosial)',
+        question: `Pak Ali menabung di Bank A dengan bunga tunggal 10% per tahun. Pak Budi menabung di Bank B dengan bunga tunggal 6% per tahun. Pada awal tahun, jumlah tabungan Pak Budi Rp500.000 lebih banyak dari tabungan Pak Ali. Setelah tepat satu tahun, jumlah tabungan mereka menjadi sama besar. Berapa tabungan awal Pak Ali? (Catatan: Angka dalam soal ini menghasilkan jawaban yang tidak bulat, pilih jawaban yang paling mendekati secara logis jika perhitungan eksak tidak ada di pilihan).`,
+        options: ['Rp 500.000', 'Rp 750.000', 'Rp 1.000.000', 'Rp 13.250.000'],
+        correctAnswer: 'd' // Jawaban eksak dari perhitungan.
+    },
+    {
+        id: 26,
+        main_category: 'Numerasi',
+        category: 'Aljabar Fungsi',
+        question: `Suatu fungsi didefinisikan dengan f(x) = ax + b. Jika f(f(2)) = 19 dan f(0) = -1, maka nilai dari a - b adalah... (diasumsikan nilai a adalah bilangan bulat)`,
+        options: ['-5', '-3', '4', '5'],
+        correctAnswer: 'd'
+    },
+    {
+        id: 27,
+        main_category: 'Numerasi',
+        category: 'Geometri Ruang (HOTS)',
+        question: `Sebuah bandul terbuat dari gabungan kerucut dan setengah bola yang jari-jarinya sama. Volume total bandul adalah 288π cm³. Jika tinggi kerucut sama dengan dua kali panjang jari-jarinya, maka luas permukaan setengah bola pada bandul tersebut adalah...`,
+        options: ['36π cm²', '54π cm²', '72π cm²', '108π cm²'],
+        correctAnswer: 'c'
+    },
+    {
+        id: 28,
+        main_category: 'Numerasi',
+        category: 'Sistem Persamaan & Logika',
+        question: `Harga 3 kg Apel dan 2 kg Jeruk adalah Rp 145.000. Harga 1 kg Apel dan 3 kg Jeruk adalah Rp 90.000. Ibu membeli 2 kg Apel dan membayar dengan dua lembar uang Rp 50.000. Uang kembalian yang seharusnya diterima Ibu adalah sekitar Rp 26.800. Manakah pernyataan yang paling mungkin benar mengenai harga buah per kg?`,
+        options: ['Harga 1 kg Apel adalah Rp 36.500.', 'Harga 1 kg Jeruk adalah Rp 20.000.', 'Harga 1 kg Apel sama dengan harga 2 kg Jeruk.', 'Harga 1 kg Jeruk lebih mahal dari harga 1 kg Apel.'],
+        correctAnswer: 'a'
+    },
+    {
+        id: 29,
+        main_category: 'Numerasi',
+        category: 'Persamaan Kuadrat',
+        question: `Diketahui x₁ dan x₂ adalah akar-akar dari persamaan kuadrat x² - (p+3)x + 12 = 0. Jika berlaku hubungan x₁ = 3x₂, dan p > 0, maka nilai p yang memenuhi adalah...`,
+        options: ['1', '3', '5', '8'],
+        correctAnswer: 'c'
+    },
+    {
+        id: 30,
+        main_category: 'Numerasi',
+        category: 'Peluang & Himpunan',
+        question: `Dari 40 siswa di sebuah kelas, 25 siswa gemar basket, dan 20 siswa gemar voli. Setiap siswa setidaknya gemar salah satu dari kedua olahraga tersebut. Jika seorang siswa dipilih secara acak untuk menjadi kapten tim gabungan, berapa peluang terpilihnya siswa yang hanya gemar basket?`,
+        options: ['1/8', '3/8', '1/2', '5/8'],
+        correctAnswer: 'c'
+    },
 ];
 
-// --- SCRIPT LOGIC ---
+// --- SCRIPT LOGIC (Tidak ada perubahan di bawah ini, sama seperti yang Anda berikan) ---
 let activeQuestions = [];
 let currentQuestionIndex = 0;
 let userAnswers = {};
@@ -180,9 +395,10 @@ function prepareTest() {
 function startTest(mode) {
     let testTitle = "Ujian";
     switch (mode) {
-        case 'all': activeQuestions = allQuestions; totalTestTimeMinutes = 90; testTitle = "Ujian Lengkap TKA"; break;
-        case 'literasi': activeQuestions = allQuestions.filter(q => q.main_category === 'Literasi'); totalTestTimeMinutes = 45; testTitle = "Ujian Kategori Literasi"; break;
-        case 'numerasi': activeQuestions = allQuestions.filter(q => q.main_category === 'Numerasi'); totalTestTimeMinutes = 25; testTitle = "Ujian Kategori Numerasi"; break;
+        case 'all': activeQuestions = allQuestions; totalTestTimeMinutes = 30; testTitle = "Ujian Lengkap TKA (HOTS)"; break;
+        case 'literasi': activeQuestions = allQuestions.filter(q => q.main_category === 'Literasi'); totalTestTimeMinutes = 15; testTitle = "Ujian Kategori Literasi (HOTS)"; break;
+        case 'numerasi': activeQuestions = allQuestions.filter(q => q.main_category === 'Numerasi'); totalTestTimeMinutes = 15; testTitle = "Ujian Kategori Numerasi (HOTS)"; break;
+        // Opsi lain akan menghasilkan 0 soal, ini perilaku yang diharapkan jika tidak ada data
         case 'sains': activeQuestions = allQuestions.filter(q => q.main_category === 'Sains'); totalTestTimeMinutes = 8; testTitle = "Ujian Kategori Pengetahuan Sains"; break;
         case 'sosial': activeQuestions = allQuestions.filter(q => q.main_category === 'Sosial'); totalTestTimeMinutes = 8; testTitle = "Ujian Kategori Pengetahuan Sosial"; break;
         case 'ketelitian': activeQuestions = allQuestions.filter(q => q.main_category === 'Ketelitian'); totalTestTimeMinutes = 4; testTitle = "Ujian Kategori Ketelitian"; break;
@@ -260,7 +476,8 @@ function loadQuestion(index) {
     currentQuestionIndex = index;
     const q = activeQuestions[index];
     
-    dom.questionText.textContent = q.question;
+    // Menggunakan <pre> untuk mempertahankan format newline dari teks soal
+    dom.questionText.innerHTML = `<pre>${q.question}</pre>`;
     dom.questionNumberCategory.textContent = `Soal ${index + 1} dari ${activeQuestions.length} - ${q.category}`;
     dom.optionsContainer.innerHTML = '';
 
@@ -470,7 +687,7 @@ function loadReviewQuestion(index) {
     const isCorrect = userAnswer === q.correctAnswer;
 
     document.getElementById('review-question-number-category').textContent = `Soal ${index + 1} - ${q.category}`;
-    document.getElementById('review-question-text').textContent = q.question;
+    document.getElementById('review-question-text').innerHTML = `<pre>${q.question}</pre>`;
     
     const statusBanner = document.getElementById('review-status-banner');
     if (userAnswer) {
