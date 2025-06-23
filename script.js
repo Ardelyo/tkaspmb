@@ -1,4 +1,4 @@
-// script.js
+// script.js (FIXED VERSION)
 
 // -----------------------------------------------------------------------------
 // 1. GLOBAL STATE & CONFIGURATION
@@ -11,6 +11,7 @@ let userAnswers = {};
 let timerInterval;
 let participantName = '';
 let testStartTime;
+let totalTestTimeMinutes = 0; // Initialize to 0
 
 // Anti-Cheat Tracker
 let violationTracker = {
@@ -61,6 +62,9 @@ async function initApp() {
         applyBranding();
         setupEventListeners();
         
+        // CRITICAL FIX: Ensure all screens are hidden initially except the target one.
+        Object.values(dom.screens).forEach(s => s.classList.remove('active'));
+
         if (config.access?.required) {
             showScreen('login');
         } else {
@@ -72,10 +76,17 @@ async function initApp() {
     }
 }
 
+// CRITICAL FIX: Robust screen visibility function
 function showScreen(screenName) {
-    Object.values(dom.screens).forEach(s => s.classList.remove('active'));
+    // Hide all screens first to prevent overlap
+    for (const key in dom.screens) {
+        dom.screens[key].classList.remove('active');
+    }
+    // Then show the target screen
     if (dom.screens[screenName]) {
         dom.screens[screenName].classList.add('active');
+    } else {
+        console.error(`Attempted to show a non-existent screen: ${screenName}`);
     }
 }
 
@@ -172,7 +183,7 @@ function createModeButton(mode, title, count, time, icon) {
     const btn = document.createElement('button');
     btn.className = 'selection-btn';
     btn.innerHTML = `<i class="${icon}"></i><strong>${title}</strong><span>${count} Soal - ${time} Menit</span>`;
-    btn.onclick = () => startTest(mode);
+    btn.onclick = () => startTest(mode, time); // Pass time to startTest
     return btn;
 }
 
@@ -186,13 +197,13 @@ function goBackToWelcome() { showScreen('welcome'); }
 // -----------------------------------------------------------------------------
 // 4. CORE TEST LOGIC
 // -----------------------------------------------------------------------------
-function startTest(mode) {
-    const testConfig = {
-        all: { questions: allQuestions, time: 30 },
-        default: { questions: allQuestions.filter(q => q.main_category === mode), time: 15 }
-    };
-    const currentConfig = testConfig[mode] || testConfig.default;
-    activeQuestions = currentConfig.questions;
+function startTest(mode, time) {
+    totalTestTimeMinutes = time; // Set the global test time
+    if (mode === 'all') {
+        activeQuestions = allQuestions;
+    } else {
+        activeQuestions = allQuestions.filter(q => q.main_category === mode);
+    }
     
     if (config.security?.antiCheatEnabled && mode === config.security.applyToMode) {
         alert("PERHATIAN: Sesi Ujian Lengkap ini dipantau oleh sistem. Aktivitas mencurigakan akan tercatat pada laporan akhir.");
@@ -201,7 +212,7 @@ function startTest(mode) {
     
     document.getElementById('instruction-list').innerHTML = `
         <li>Anda akan mengerjakan <strong>${activeQuestions.length} soal</strong>.</li>
-        <li>Waktu pengerjaan Anda adalah <strong>${currentConfig.time} menit</strong>.</li>
+        <li>Waktu pengerjaan Anda adalah <strong>${totalTestTimeMinutes} menit</strong>.</li>
         <li>Waktu akan berjalan otomatis saat tes dimulai.</li>`;
     showScreen('instruction');
 }
@@ -219,7 +230,7 @@ function beginActualTest() {
 
 function startTimer() {
     clearInterval(timerInterval);
-    const totalTimeSeconds = activeQuestions.length > 4 ? 30 * 60 : 15 * 60; // Simplified logic for demo
+    const totalTimeSeconds = totalTestTimeMinutes * 60;
     let timeLeft = totalTimeSeconds;
 
     timerInterval = setInterval(() => {
@@ -343,15 +354,16 @@ function generateReport() {
     document.getElementById('incorrect-count').textContent = answeredCount - correctAnswers;
     document.getElementById('unanswered-count').textContent = activeQuestions.length - answeredCount;
 
-    // Launch confetti for high scores
     if (score >= 85) {
         confetti({ particleCount: 150, spread: 90, origin: { y: 0.6 } });
     }
 
-    // Category Analysis
     generateCategoryAnalysis();
+    generateViolationReport();
+    generateRecommendations();
+}
 
-    // Violation Report
+function generateViolationReport() {
     const violationDetails = document.getElementById('violation-details');
     violationDetails.innerHTML = '';
     let hasViolations = false;
@@ -364,9 +376,6 @@ function generateReport() {
         hasViolations = true;
     }
     document.getElementById('violation-report-section').style.display = hasViolations ? 'block' : 'none';
-
-    // Dynamic Recommendations
-    generateRecommendations();
 }
 
 function generateCategoryAnalysis() {
@@ -383,22 +392,25 @@ function generateCategoryAnalysis() {
         }
     });
 
-    analysisContainer.innerHTML = Object.entries(categoryStats).map(([name, stats]) => {
-        const accuracy = stats.total > 0 ? Math.round((stats.correct / stats.total) * 100) : 0;
-        return `
-            <div class="category-item">
-                <div class="category-info">
-                    <strong>${name}</strong>
-                    <span>${stats.correct}/${stats.total} Benar (${accuracy}%)</span>
+    if (Object.keys(categoryStats).length > 0) {
+        analysisContainer.innerHTML = Object.entries(categoryStats).map(([name, stats]) => {
+            const accuracy = stats.total > 0 ? Math.round((stats.correct / stats.total) * 100) : 0;
+            return `
+                <div class="category-item">
+                    <div class="category-info">
+                        <strong>${name}</strong>
+                        <span>${stats.correct}/${stats.total} Benar (${accuracy}%)</span>
+                    </div>
+                    <div class="accuracy-bar-container">
+                        <div class="accuracy-bar" style="width: ${accuracy}%; background-color: ${accuracy > 70 ? 'var(--color-correct)' : 'var(--color-primary)'};"></div>
+                    </div>
                 </div>
-                <div class="accuracy-bar-container">
-                    <div class="accuracy-bar" style="width: ${accuracy}%; background-color: ${accuracy > 70 ? 'var(--color-correct)' : 'var(--color-primary)'};"></div>
-                </div>
-            </div>
-        `;
-    }).join('');
-    
-    document.getElementById('analysis-card').style.display = Object.keys(categoryStats).length > 0 ? 'block' : 'none';
+            `;
+        }).join('');
+        document.getElementById('analysis-card').style.display = 'block';
+    } else {
+        document.getElementById('analysis-card').style.display = 'none';
+    }
     return categoryStats;
 }
 
@@ -406,17 +418,15 @@ function generateRecommendations() {
     const feedbackEl = document.getElementById('recommendation-feedback');
     const stats = generateCategoryAnalysis();
     let recommendations = [];
-
     const sortedCats = Object.entries(stats).sort(([,a], [,b]) => (a.correct/a.total) - (b.correct/b.total));
 
     if (sortedCats.length > 0) {
         const weakest = sortedCats[0];
         const strongest = sortedCats[sortedCats.length - 1];
-
         if ((weakest[1].correct / weakest[1].total) < 0.6) {
             recommendations.push(`Kinerja Anda di kategori <strong>${weakest[0]}</strong> perlu perhatian lebih. Fokus pelajari kembali soal-soal di area ini.`);
         }
-        if ((strongest[1].correct / strongest[1].total) >= 0.8) {
+        if ((strongest[1].correct / strongest[1].total) >= 0.8 && strongest[0] !== weakest[0]) {
             recommendations.push(`Anda menunjukkan penguasaan yang sangat baik pada kategori <strong>${strongest[0]}</strong>. Pertahankan!`);
         }
     }
@@ -485,14 +495,11 @@ function tryAgain() { window.location.reload(); }
 function downloadPDF() {
     const { jsPDF } = window.jspdf;
     const report = document.getElementById('report-container');
-    
-    // Temporarily set a fixed width for consistent PDF rendering
+    const originalWidth = report.style.width;
     report.style.width = '800px';
 
     html2canvas(report, { scale: 2, useCORS: true }).then(canvas => {
-        // Restore original width
-        report.style.width = '';
-
+        report.style.width = originalWidth;
         const imgData = canvas.toDataURL('image/png');
         const pdf = new jsPDF('p', 'mm', 'a4'); 
         const pdfWidth = pdf.internal.pageSize.getWidth();
