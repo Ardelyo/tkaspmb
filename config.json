@@ -1,0 +1,36 @@
+{
+  "branding": {
+    "title": "Ujian Mandiri TOPintar",
+    "subtitle": "Platform Ujian Seleksi Terpadu",
+    "developer": "Tim Pengembang TOPintar",
+    "disclaimer": "Platform simulasi ini dikembangkan secara eksklusif oleh Tim TOPintar untuk tujuan latihan. Soal yang disajikan bukan merupakan soal resmi dari instansi manapun."
+  },
+  "access": {
+    "required": true,
+    "validCodes": [
+      "TOPINTAR2025",
+      "SUKSESSPMB",
+      "BATCH1GO"
+    ]
+  },
+  "security": {
+    "antiCheatEnabled": true,
+    "applyToMode": "all"
+  },
+  "batches": [
+    {
+      "id": "batch-1",
+      "title": "Batch 1: Paket HOTS Fundamental",
+      "description": "Literasi & Numerasi Tingkat Lanjut",
+      "filePath": "data/batch-1.json",
+      "status": "unlocked"
+    },
+    {
+      "id": "batch-2",
+      "title": "Batch 2: Paket Intensif (Segera Hadir)",
+      "description": "Soal-soal variasi materi baru.",
+      "filePath": "data/batch-2.json",
+      "status": "locked"
+    }
+  ]
+}
