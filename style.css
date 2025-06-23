@@ -186,12 +186,16 @@ h1, h2, h3, h4, strong {
 
 
 /* 5. TEST INTERFACE (MOBILE FIRST) */
-#test-screen, #review-screen {
-    display: flex;
+/* ***** FIX START ***** */
+/* This rule is now conditional on the .active class to prevent it from rendering when hidden. */
+#test-screen.active, #review-screen.active {
+    display: flex; /* This was the problematic property */
     flex-direction: column;
     height: 100vh;
     max-height: 100vh;
 }
+/* ***** FIX END ***** */
+
 .test-header-mobile {
     display: flex;
     justify-content: space-between;
@@ -348,7 +352,9 @@ h1, h2, h3, h4, strong {
 
 /* 8. DESKTOP RESPONSIVENESS */
 @media (min-width: 768px) {
-    #test-screen, #review-screen { flex-direction: row; }
+    #test-screen.active, #review-screen.active {
+        flex-direction: row;
+    }
     .test-header-mobile { display: none; }
     .sidebar {
         position: static; transform: translateX(0); width: 320px;
