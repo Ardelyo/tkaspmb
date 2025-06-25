@@ -4,7 +4,7 @@
 import { state, setConfig, setAllQuestions, setParticipantName } from './state.js';
 import { loadConfig, loadBatch } from './api.js';
 import { showScreen, applyBranding, buildBatchSelectionScreen, analyzeAndBuildModeScreen } from './ui.js';
-import { startTest, beginActualTest, nextQuestion, prevQuestion, toggleFlag, confirmFinish } from './quiz.js';
+import { startTest, beginActualTest, nextQuestion, prevQuestion, toggleFlag, confirmFinish, selectAnswer, loadQuestion } from './quiz.js';
 import { showReview, reviewPrevQuestion, reviewNextQuestion, loadReviewQuestion } from './review.js';
 import { downloadPDF } from './report.js';
 
@@ -80,6 +80,6 @@ function setupGlobalEventHandlers() {
     window.tryAgain = tryAgain;
     window.downloadPDF = downloadPDF;
     window.selectAnswer = selectAnswer;
-    window.loadQuestion = loadQuestion; // from quiz.js
-    window.loadReviewQuestion = loadReviewQuestion; // from review.js
+    window.loadQuestion = loadQuestion;
+    window.loadReviewQuestion = loadReviewQuestion;
 }

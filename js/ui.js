@@ -3,7 +3,6 @@
 
 import { state } from './state.js';
 import { getCategoryIcon, parseMarkdown } from './utils.js';
-import { selectAnswer, loadQuestion } from './quiz.js';
 
 export const screens = {
     login: document.getElementById('login-screen'),

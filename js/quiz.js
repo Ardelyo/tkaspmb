@@ -1,12 +1,13 @@
 
 // js/quiz.js
 
-import { state, setTimerInterval, resetState, setActiveQuestions, setTotalTestTimeMinutes, setCurrentQuestionIndex, setUserAnswers } from './state.js';
+import { state, setTimerInterval, resetQuizProgress, setActiveQuestions, setTotalTestTimeMinutes, setCurrentQuestionIndex, setUserAnswers } from './state.js';
 import { showInstructionScreen, showScreen, renderQuestion, updateTimer, buildNavigationGrid } from './ui.js';
 import { initializeAntiCheatListeners, removeAntiCheatListeners } from './antiCheat.js';
 import { generateReport } from './report.js';
 
 export function startTest(mode) {
+    resetQuizProgress(); // Reset progress here
     if (mode === 'all') {
         setActiveQuestions(state.allQuestions);
     } else {
@@ -24,7 +25,6 @@ export function startTest(mode) {
 }
 
 export function beginActualTest() {
-    resetQuizProgress();
     buildNavigationGrid();
     loadQuestion(0);
     startTimer();
