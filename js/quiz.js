@@ -24,7 +24,7 @@ export function startTest(mode) {
 }
 
 export function beginActualTest() {
-    resetState();
+    resetQuizProgress();
     buildNavigationGrid();
     loadQuestion(0);
     startTimer();

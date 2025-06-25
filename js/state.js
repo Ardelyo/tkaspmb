@@ -59,8 +59,7 @@ export function setCurrentReviewIndex(index) {
     state.currentReviewIndex = index;
 }
 
-export function resetState() {
-    state.activeQuestions = [];
+export function resetQuizProgress() {
     state.currentQuestionIndex = 0;
     state.userAnswers = {};
     state.flaggedQuestions.clear();

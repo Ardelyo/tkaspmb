@@ -115,7 +115,7 @@ export function renderQuestion() {
         const label = document.createElement('label');
         label.className = 'option';
         label.innerHTML = `<input type="radio" name="option" value="${optionLabels[i]}"><span class="option-label">${optionLabels[i].toUpperCase()}</span><span>${option}</span>`;
-        label.onclick = () => selectAnswer(q.id, optionLabels[i]);
+        label.onclick = () => window.selectAnswer(q.id, optionLabels[i]);
         optionsContainer.appendChild(label);
     });
     

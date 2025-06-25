@@ -79,6 +79,7 @@ function setupGlobalEventHandlers() {
     window.reviewNextQuestion = reviewNextQuestion;
     window.tryAgain = tryAgain;
     window.downloadPDF = downloadPDF;
+    window.selectAnswer = selectAnswer;
     window.loadQuestion = loadQuestion; // from quiz.js
     window.loadReviewQuestion = loadReviewQuestion; // from review.js
 }
