@@ -15,9 +15,9 @@ export const screens = {
 };
 
 export function showScreen(screenName) {
-    Object.values(screens).forEach(s => s.classList.remove('active'));
+    Object.values(screens).forEach(s => s.classList.remove('screen--active'));
     if(screens[screenName]) {
-        screens[screenName].classList.add('active');
+        screens[screenName].classList.add('screen--active');
     }
 }
 
@@ -44,9 +44,9 @@ export function buildBatchSelectionScreen(onSelect) {
     state.config.batches.forEach(batch => {
         const btn = document.createElement('button');
         btn.className = 'selection-btn';
-        btn.innerHTML = `<i class="fas fa-layer-group"></i><strong>${batch.title}</strong><span>${batch.description}</span>`;
+        btn.innerHTML = `<i class="fas fa-layer-group selection-btn__icon"></i><strong class="selection-btn__title">${batch.title}</strong><span class="selection-btn__description">${batch.description}</span>`;
         if (batch.status === 'locked') {
-            btn.classList.add('locked');
+            btn.classList.add('selection-btn--locked');
             btn.disabled = true;
         } else {
             btn.onclick = () => onSelect(batch);
@@ -87,7 +87,7 @@ export function analyzeAndBuildModeScreen(onSelect) {
 function createModeButton(mode, title, count, time, icon, onSelect) {
     const btn = document.createElement('button');
     btn.className = 'selection-btn';
-    btn.innerHTML = `<i class="${icon}"></i><strong>${title}</strong><span>${count} Soal - ${time} Menit</span>`;
+    btn.innerHTML = `<i class="${icon} selection-btn__icon"></i><strong class="selection-btn__title">${title}</strong><span class="selection-btn__description">${count} Soal - ${time} Menit</span>`;
     btn.onclick = () => onSelect(mode);
     return btn;
 }
@@ -113,7 +113,7 @@ export function renderQuestion() {
     q.options.forEach((option, i) => {
         const label = document.createElement('label');
         label.className = 'option';
-        label.innerHTML = `<input type="radio" name="option" value="${optionLabels[i]}"><span class="option-label">${optionLabels[i].toUpperCase()}</span><span>${option}</span>`;
+        label.innerHTML = `<input type="radio" name="option" value="${optionLabels[i]}" class="option__radio"><span class="option__label">${optionLabels[i].toUpperCase()}</span><span>${option}</span>`;
         label.onclick = () => window.selectAnswer(q.id, optionLabels[i]);
         optionsContainer.appendChild(label);
     });
@@ -128,9 +128,9 @@ export function renderQuestion() {
 export function updateTestUI() {
     document.querySelectorAll('#question-grid .q-btn').forEach((btn, i) => {
         btn.className = 'q-btn';
-        if (i === state.currentQuestionIndex) btn.classList.add('current');
-        if (state.userAnswers[state.activeQuestions[i].id]) btn.classList.add('answered');
-        if (state.flaggedQuestions.has(state.activeQuestions[i].id)) btn.classList.add('flagged');
+        if (i === state.currentQuestionIndex) btn.classList.add('q-btn--current');
+        if (state.userAnswers[state.activeQuestions[i].id]) btn.classList.add('q-btn--answered');
+        if (state.flaggedQuestions.has(state.activeQuestions[i].id)) btn.classList.add('q-btn--flagged');
     });
 
     document.getElementById('prev-btn').disabled = state.currentQuestionIndex === 0;
