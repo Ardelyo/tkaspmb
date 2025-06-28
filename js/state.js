@@ -12,7 +12,11 @@ export const state = {
     participantName: '',
     totalTestTimeMinutes: 0,
     testStartTime: null,
-    currentReviewIndex: 0
+    currentReviewIndex: 0,
+    // New properties for advanced tracking
+    timeSpentPerQuestion: {}, // { questionId: timeInSeconds }
+    answerChanges: {}, // { questionId: changeCount }
+    questionTimestamps: {}, // { questionId: firstVisitTimestamp }
 };
 
 export function setConfig(newConfig) {
@@ -66,4 +70,8 @@ export function resetQuizProgress() {
     clearInterval(state.timerInterval);
     state.timerInterval = null;
     state.testStartTime = null;
+    // Reset new tracking properties
+    state.timeSpentPerQuestion = {};
+    state.answerChanges = {};
+    state.questionTimestamps = {};
 }

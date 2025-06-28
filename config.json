@@ -1,9 +1,9 @@
 {
   "branding": {
-    "title": "Batch Ambis",
+    "title": "Ujian Mandiri TOPintar",
     "subtitle": "Platform Ujian Seleksi Terpadu",
     "developer": "Tim Pengembang TOPintar",
-    "disclaimer": "Platform simulasi ini dikembangkan secara eksklusif oleh Tim TOPintar untuk tujuan latihan. Soal yang disajikan bukan merupakan soal resmi dari instansi manapun."
+    "disclaimer": "Ini hanyalah latihan soal. Platform simulasi ini dikembangkan secara eksklusif oleh Tim TOPintar untuk tujuan latihan dan soal yang disajikan bukan merupakan soal resmi dari instansi manapun."
   },
   "access": {
     "required": true,
@@ -28,8 +28,8 @@
     },
     {
       "id": "batch-2",
-      "title": "Batch 2: Persiapan TKA",
-      "description": "Soal-soal variasi materi baru untuk persiapan TKA masuk SMA.",
+      "title": "Batch 2: Ambis",
+      "description": "Soal-soal HOTS Literasi dan Numerasi untuk persiapan TKA.",
       "filePath": "data/batch-2.json",
       "status": "unlocked"
     }

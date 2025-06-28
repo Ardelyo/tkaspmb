@@ -151,3 +151,105 @@ export function updateTimer(time) {
     timerEl.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
     progressBar.style.width = `${((state.totalTestTimeMinutes * 60 - time) / (state.totalTestTimeMinutes * 60)) * 100}%`;
 }
+
+// =============================================================================
+// NEW ADVANCED REPORTING FUNCTIONS
+// =============================================================================
+
+export function renderAdvancedReport(analysis) {
+    renderPerformanceChart(analysis.categoryPerformance);
+    renderBehavioralMetrics(analysis.behavioral);
+    renderPaceAnalysisTable(analysis.pace);
+}
+
+function renderPerformanceChart(categoryData) {
+    const container = document.getElementById('performance-chart-container');
+    container.innerHTML = ''; // Clear previous chart
+
+    const maxScore = 100; // Use 100 as a stable max score for percentage
+
+    for (const categoryName in categoryData) {
+        const category = categoryData[categoryName];
+        const barPercentage = category.score;
+
+        const chartBar = document.createElement('div');
+        chartBar.className = 'report__chart-bar-item';
+        chartBar.innerHTML = `
+            <div class="chart-bar__label">${categoryName}</div>
+            <div class="chart-bar__wrapper">
+                <div class="chart-bar__fill" style="width: ${barPercentage}%; background-color: ${getCategoryColor(categoryName)};"></div>
+            </div>
+            <div class="chart-bar__value">${category.score.toFixed(0)}%</div>
+        `;
+        container.appendChild(chartBar);
+    }
+}
+
+function renderBehavioralMetrics(behavioralData) {
+    const container = document.getElementById('behavioral-metrics-grid');
+    container.innerHTML = ''; // Clear previous metrics
+
+    const metrics = [
+        {
+            icon: 'fa-stopwatch',
+            label: 'Waktu Rata-rata / Soal',
+            value: `${behavioralData.avgTimePerQuestion.toFixed(1)}s`
+        },
+        {
+            icon: 'fa-check-circle',
+            label: 'Waktu Rata-rata (Benar)',
+            value: `${behavioralData.avgTimeCorrect.toFixed(1)}s`
+        },
+        {
+            icon: 'fa-times-circle',
+            label: 'Waktu Rata-rata (Salah)',
+            value: `${behavioralData.avgTimeIncorrect.toFixed(1)}s`
+        },
+        {
+            icon: 'fa-exchange-alt',
+            label: 'Total Perubahan Jawaban',
+            value: `${behavioralData.totalAnswerChanges}`
+        }
+    ];
+
+    metrics.forEach(metric => {
+        const card = document.createElement('div');
+        card.className = 'behavior-metric-card';
+        card.innerHTML = `
+            <div class="metric-card__icon"><i class="fas ${metric.icon}"></i></div>
+            <div class="metric-card__body">
+                <div class="metric-card__value">${metric.value}</div>
+                <div class="metric-card__label">${metric.label}</div>
+            </div>
+        `;
+        container.appendChild(card);
+    });
+}
+
+function renderPaceAnalysisTable(paceData) {
+    const tbody = document.getElementById('pace-analysis-table-body');
+    tbody.innerHTML = ''; // Clear previous table
+
+    paceData.forEach((item, index) => {
+        const row = document.createElement('tr');
+        const resultStatus = item.isCorrect ? 'correct' : 'incorrect';
+        row.innerHTML = `
+            <td>${index + 1}</td>
+            <td>${item.category}</td>
+            <td><span class="pace-table__status pace-table__status--${resultStatus}">${item.isCorrect ? 'Benar' : 'Salah'}</span></td>
+            <td>${item.timeSpent}s</td>
+            <td>${item.changes} kali</td>
+        `;
+        tbody.appendChild(row);
+    });
+}
+
+// Helper to get a color for the chart based on category name
+function getCategoryColor(categoryName) {
+    let hash = 0;
+    for (let i = 0; i < categoryName.length; i++) {
+        hash = categoryName.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    const colors = ['#2563EB', '#16A34A', '#F59E0B', '#DC2626', '#7C3AED', '#DB2777', '#0891B2'];
+    return colors[Math.abs(hash) % colors.length];
+}

@@ -6,6 +6,8 @@ import { showInstructionScreen, showScreen, renderQuestion, updateTimer, buildNa
 import { initializeAntiCheatListeners, removeAntiCheatListeners } from './antiCheat.js';
 import { generateReport } from './report.js';
 
+let lastQuestionChangeTime = null;
+
 export function startTest(mode) {
     resetQuizProgress(); // Reset progress here
     if (mode === 'all') {
@@ -29,6 +31,7 @@ export function beginActualTest() {
     loadQuestion(0);
     startTimer();
     state.testStartTime = new Date();
+    lastQuestionChangeTime = Date.now(); // Initialize the timer here
     showScreen('test');
 }
 
@@ -47,11 +50,40 @@ function startTimer() {
 }
 
 export function loadQuestion(index) {
+    const now = Date.now();
+    // If we are not on the first question, calculate time spent on the previous one
+    if (lastQuestionChangeTime && state.currentQuestionIndex !== null) {
+        const previousQuestionId = state.activeQuestions[state.currentQuestionIndex].id;
+        const timeSpent = Math.round((now - lastQuestionChangeTime) / 1000);
+
+        if (!state.timeSpentPerQuestion[previousQuestionId]) {
+            state.timeSpentPerQuestion[previousQuestionId] = 0;
+        }
+        state.timeSpentPerQuestion[previousQuestionId] += timeSpent;
+    }
+
+    // Update the timestamp for the new question
+    lastQuestionChangeTime = now;
+
     setCurrentQuestionIndex(index);
+
+    // Record the first visit timestamp if it doesn't exist
+    const newQuestionId = state.activeQuestions[index].id;
+    if (!state.questionTimestamps[newQuestionId]) {
+        state.questionTimestamps[newQuestionId] = now;
+    }
+
     renderQuestion();
 }
 
 export function selectAnswer(questionId, answer) { 
+    // Track answer changes
+    if (state.userAnswers[questionId] && state.userAnswers[questionId] !== answer) {
+        if (!state.answerChanges[questionId]) {
+            state.answerChanges[questionId] = 0;
+        }
+        state.answerChanges[questionId]++;
+    }
     const newAnswers = { ...state.userAnswers, [questionId]: answer };
     setUserAnswers(newAnswers);
 }
@@ -85,6 +117,18 @@ export function confirmFinish() {
 }
 
 function finishTest() {
+    // Record time spent on the very last question
+    const now = Date.now();
+    if (lastQuestionChangeTime && state.currentQuestionIndex !== null) {
+        const lastQuestionId = state.activeQuestions[state.currentQuestionIndex].id;
+        const timeSpent = Math.round((now - lastQuestionChangeTime) / 1000);
+
+        if (!state.timeSpentPerQuestion[lastQuestionId]) {
+            state.timeSpentPerQuestion[lastQuestionId] = 0;
+        }
+        state.timeSpentPerQuestion[lastQuestionId] += timeSpent;
+    }
+
     clearInterval(state.timerInterval);
     removeAntiCheatListeners();
     generateReport();

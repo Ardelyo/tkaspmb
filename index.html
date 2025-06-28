@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Batch Ambis</title>
+    <title>Ujian Mandiri TOPintar</title>
     
     <!-- External Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -138,6 +138,43 @@
                     <div class="report__section">
                         <h3 class="report__section-title">REKOMENDASI PERSONAL</h3>
                         <div id="recommendation-feedback">
+                        </div>
+                    </div>
+
+                    <!-- ===== NEW: PERFORMANCE VISUALIZATION ===== -->
+                    <div class="report__section">
+                        <h3 class="report__section-title"><i class="fas fa-chart-bar"></i> Visualisasi Performa</h3>
+                        <div id="performance-chart-container" class="report__chart-container">
+                            <!-- Chart will be rendered here by JS -->
+                        </div>
+                    </div>
+
+                    <!-- ===== NEW: BEHAVIORAL ANALYSIS ===== -->
+                    <div class="report__section">
+                        <h3 class="report__section-title"><i class="fas fa-user-cog"></i> Analisis Perilaku Ujian</h3>
+                        <div id="behavioral-metrics-grid" class="behavior-metrics">
+                            <!-- Metric cards will be rendered here by JS -->
+                        </div>
+                    </div>
+
+                    <!-- ===== NEW: PACE ANALYSIS ===== -->
+                    <div class="report__section">
+                        <h3 class="report__section-title"><i class="fas fa-tachometer-alt"></i> Analisis Kecepatan Pengerjaan</h3>
+                        <div class="report__table-wrapper">
+                            <table class="pace-table" id="pace-analysis-table">
+                                <thead>
+                                    <tr>
+                                        <th>No.</th>
+                                        <th>Kategori</th>
+                                        <th>Hasil</th>
+                                        <th>Waktu Pengerjaan</th>
+                                        <th>Perubahan Jawaban</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="pace-analysis-table-body">
+                                    <!-- Pace data will be rendered here by JS -->
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
