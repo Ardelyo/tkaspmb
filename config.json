@@ -1,6 +1,6 @@
 {
   "branding": {
-    "title": "Ujian Mandiri TOPintar",
+    "title": "Batch Ambis",
     "subtitle": "Platform Ujian Seleksi Terpadu",
     "developer": "Tim Pengembang TOPintar",
     "disclaimer": "Platform simulasi ini dikembangkan secara eksklusif oleh Tim TOPintar untuk tujuan latihan. Soal yang disajikan bukan merupakan soal resmi dari instansi manapun."
@@ -10,7 +10,8 @@
     "validCodes": [
       "TOPINTAR2025",
       "SUKSESSPMB",
-      "BATCH1GO"
+      "BATCH1GO",
+      "BATCH2GO"
     ]
   },
   "security": {
@@ -27,10 +28,10 @@
     },
     {
       "id": "batch-2",
-      "title": "Batch 2: Persiapan TKA (Segera Hadir)",
-      "description": "Soal-soal variasi materi baru untuk persiapan2 TKA masuk SMA.",
+      "title": "Batch 2: Persiapan TKA",
+      "description": "Soal-soal variasi materi baru untuk persiapan TKA masuk SMA.",
       "filePath": "data/batch-2.json",
-      "status": "locked"
+      "status": "unlocked"
     }
   ]
 }
