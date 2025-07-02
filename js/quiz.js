@@ -13,12 +13,16 @@ export function startTest(mode) {
 
     if (mode === 'all') {
         setActiveQuestions(state.allQuestions);
-        setTotalTestTimeMinutes(90); // 90 minutes for the full test
+        setTotalTestTimeMinutes(90);
     } else {
         const filteredQuestions = state.allQuestions.filter(q => q.main_category === mode);
         setActiveQuestions(filteredQuestions);
-        // 30 seconds per question for partial tests
-        setTotalTestTimeMinutes(filteredQuestions.length * 0.5);
+        
+        if (mode === 'Literasi' || mode === 'Numerasi') {
+            setTotalTestTimeMinutes(60);
+        } else {
+            setTotalTestTimeMinutes(filteredQuestions.length * 0.5); // 30 seconds per question for others
+        }
     }
 
     if (state.config.security.antiCheatEnabled && mode === state.config.security.applyToMode) {

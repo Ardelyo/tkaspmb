@@ -85,13 +85,17 @@ function performAdvancedAnalysis() {
         totalAnswerChanges += changes;
     });
 
+    const isFullTest = state.activeQuestions.length === state.allQuestions.length;
+
     // Finalize category scores
     for (const cat in categoryPerformance) {
         const { total, correct } = categoryPerformance[cat];
         categoryPerformance[cat].score = total > 0 ? Math.round((correct / total) * 100) : 0;
     }
 
-    const score = activeQuestions.length > 0 ? Math.round((correctCount / activeQuestions.length) * 100) : 0;
+    const score = isFullTest 
+        ? correctCount * 10 
+        : (activeQuestions.length > 0 ? Math.round((correctCount / activeQuestions.length) * 100) : 0);
 
     return {
         overall: {

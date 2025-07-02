@@ -78,7 +78,12 @@ export function analyzeAndBuildModeScreen(onSelect) {
 
     for (const catName in categories) {
         const cat = categories[catName];
-        const timeForCategory = Math.ceil(cat.count * 0.5); // 30 seconds per question
+        let timeForCategory;
+        if (catName === 'Literasi' || catName === 'Numerasi') {
+            timeForCategory = 60;
+        } else {
+            timeForCategory = Math.ceil(cat.count * 0.5); // 30 seconds for others
+        }
         const btn = createModeButton(catName, catName, cat.count, timeForCategory, cat.icon, onSelect);
         grid.appendChild(btn);
     }
