@@ -72,13 +72,13 @@ export function analyzeAndBuildModeScreen(onSelect) {
         categories[q.main_category].count++;
     });
 
-    const timeForAll = state.allQuestions.length * 6;
+    const timeForAll = 90; // Hardcoded 90 minutes for the full test
     const allBtn = createModeButton('all', 'Ujian Lengkap', state.allQuestions.length, timeForAll, 'fas fa-star', onSelect);
     grid.appendChild(allBtn);
 
     for (const catName in categories) {
         const cat = categories[catName];
-        const timeForCategory = cat.count * 6;
+        const timeForCategory = Math.ceil(cat.count * 0.5); // 30 seconds per question
         const btn = createModeButton(catName, catName, cat.count, timeForCategory, cat.icon, onSelect);
         grid.appendChild(btn);
     }
